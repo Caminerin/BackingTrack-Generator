@@ -114,12 +114,12 @@ fun PlayerScreen(vm: AppViewModel, nav: NavController) {
                 Text("Generando… ${(renderProgress * 100).toInt()}%")
                 Spacer(Modifier.height(8.dp))
                 LinearProgressIndicator(
-                    progress = { renderProgress },
+                    progress = renderProgress,
                     modifier = Modifier.fillMaxWidth(),
                 )
             } else {
                 LinearProgressIndicator(
-                    progress = { playHead },
+                    progress = playHead,
                     modifier = Modifier.fillMaxWidth(),
                 )
             }
