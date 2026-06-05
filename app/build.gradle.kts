@@ -63,7 +63,10 @@ android {
 }
 
 dependencies {
-    val composeBom = platform("androidx.compose:compose-bom:2024.01.00")
+    // enforcedPlatform forces every androidx.compose.* artifact to the BOM
+    // version, preventing a transitive dependency from bumping one Compose
+    // library (e.g. animation-core) out of sync with material3 at runtime.
+    val composeBom = enforcedPlatform("androidx.compose:compose-bom:2024.01.00")
     implementation(composeBom)
 
     implementation("androidx.core:core-ktx:1.12.0")

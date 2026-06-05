@@ -146,6 +146,7 @@ fun PlayerScreen(vm: AppViewModel, nav: NavController) {
                 ) {
                     if (isRendering) {
                         CircularProgressIndicator(
+                            progress = renderProgress.coerceIn(0f, 1f),
                             modifier = Modifier.size(28.dp),
                             color = MaterialTheme.colorScheme.onPrimary,
                         )
