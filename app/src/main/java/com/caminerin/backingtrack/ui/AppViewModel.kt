@@ -63,6 +63,7 @@ class AppViewModel(app: Application) : AndroidViewModel(app) {
     init {
         player.onPosition = { _playHead.value = it }
         player.onComplete = { _isPlaying.value = player.isPlaying }
+        player.onError = { _isPlaying.value = false; _status.value = "Error de reproducción: ${it.javaClass.simpleName}: ${it.message}" }
         viewModelScope.launch(Dispatchers.IO) {
             runCatching { SamplePack(getApplication()) }
                 .onSuccess {
@@ -137,8 +138,7 @@ class AppViewModel(app: Application) : AndroidViewModel(app) {
         _renderProgress.value = 0f
         viewModelScope.launch(Dispatchers.Default) {
             runCatching {
-                r.render(_recipe.value) { p -> _renderProgress.value = p }
-            }.onSuccess { result ->
+                val result = r.render(_recipe.value) { p -> _renderProgress.value = p }
                 lastRender = result
                 player.load(result.pcm, result.sampleRate)
                 player.loop = _loop.value
@@ -150,7 +150,7 @@ class AppViewModel(app: Application) : AndroidViewModel(app) {
             }.onFailure {
                 withContext(Dispatchers.Main) {
                     _isRendering.value = false
-                    _status.value = "Error al generar: ${it.message}"
+                    _status.value = "Error al generar: ${it.javaClass.simpleName}: ${it.message}"
                 }
             }
         }
@@ -159,9 +159,16 @@ class AppViewModel(app: Application) : AndroidViewModel(app) {
     fun play() {
         if (!_hasRendered.value) return
         player.loop = _loop.value
-        player.play()
-        _isPlaying.value = true
+        runCatching {
+            player.play()
+            _isPlaying.value = true
+        }.onFailure {
+            _isPlaying.value = false
+            _status.value = "Error de audio: ${it.javaClass.simpleName}: ${it.message}"
+        }
     }
+
+    fun clearStatus() { _status.value = null }
 
     fun pause() {
         player.pause()

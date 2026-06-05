@@ -145,8 +145,8 @@ class Renderer(private val pack: SamplePack) {
 
     private fun addSample(buf: FloatArray, start: Int, src: FloatArray, gain: Float) {
         if (start >= buf.size) return
+        var i = if (start < 0) -start else 0
         val n = minOf(src.size, buf.size - start)
-        var i = 0
         while (i < n) {
             buf[start + i] += src[i] * gain
             i++
@@ -158,7 +158,7 @@ class Renderer(private val pack: SamplePack) {
         if (start >= buf.size) return
         val outLen = (src.size / ratio).toInt()
         val maxN = minOf(outLen, buf.size - start)
-        var i = 0
+        var i = if (start < 0) -start else 0
         while (i < maxN) {
             val pos = i * ratio
             val idx = pos.toInt()
