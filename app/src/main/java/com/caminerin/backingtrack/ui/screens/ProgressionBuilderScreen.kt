@@ -191,4 +191,4 @@ private fun editChord(
 }
 
 private fun Modifier.clickableCell(onClick: () -> Unit): Modifier =
-    this.then(androidx.compose.foundation.clickable(onClick = onClick))
+    this.clickable(onClick = onClick)
