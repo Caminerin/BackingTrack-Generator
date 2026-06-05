@@ -168,8 +168,6 @@ class AppViewModel(app: Application) : AndroidViewModel(app) {
         }
     }
 
-    fun clearStatus() { _status.value = null }
-
     fun pause() {
         player.pause()
         _isPlaying.value = false
