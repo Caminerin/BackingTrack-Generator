@@ -26,7 +26,19 @@ jobs:
         run: chmod +x ./gradlew
 
       - name: Build debug APK
-        run: ./gradlew assembleDebug --stacktrace
+        run: |
+          set -o pipefail
+          ./gradlew assembleDebug --stacktrace --console=plain 2>&1 | tee build.log
+
+      - name: Surface build errors
+        if: failure()
+        run: |
+          echo "----- grepped errors -----"
+          grep -nE "^e: |error: |: error:|FAILURE:|What went wrong|Caused by:|Unresolved reference|> Task .* FAILED" build.log | head -120 | while IFS= read -r line; do
+            echo "::error::${line}"
+          done
+          echo "----- tail of build.log -----"
+          tail -150 build.log
 
       - name: Lint
         run: ./gradlew lintDebug --stacktrace || true
