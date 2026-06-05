@@ -12,10 +12,16 @@ import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 
 /**
- * Plays an interleaved-stereo float PCM buffer via AudioTrack, with looping and
- * play-head reporting. Streaming write so we can loop a long buffer cheaply.
+ * Plays a set of mono instrument stems, mixing them live with per-stem gain
+ * (volume / mute) and stereo pan. Volume and mute changes therefore take effect
+ * instantly without re-rendering. Loops the body only (the count-in is heard once).
  */
 class TrackPlayer {
+
+    /** One mono instrument bus with its (volatile) live gain and stereo placement. */
+    class Stem(val name: String, val mono: FloatArray, val lpan: Float, val rpan: Float) {
+        @Volatile var gain: Float = 0f
+    }
 
     private var track: AudioTrack? = null
     private var job: Job? = null
@@ -30,17 +36,32 @@ class TrackPlayer {
     var onComplete: (() -> Unit)? = null
     var onError: ((Throwable) -> Unit)? = null
 
-    private var pcm: FloatArray = FloatArray(0)
+    @Volatile private var stems: List<Stem> = emptyList()
+    private var countIn: FloatArray = FloatArray(0)
+    private var totalFrames: Int = 0
+    private var loopStartFrame: Int = 0
     private var sampleRate: Int = SAMPLE_RATE
 
-    fun load(interleaved: FloatArray, sampleRate: Int) {
+    fun load(result: Renderer.RenderResult, gains: Map<String, Float>) {
         stop()
-        this.pcm = interleaved
-        this.sampleRate = sampleRate
+        stems = result.stems.map { (name, buf) ->
+            val (lp, rp) = Renderer.panGains(result.pan[name] ?: 0f)
+            Stem(name, buf, lp, rp).also { it.gain = gains[name] ?: 0f }
+        }
+        countIn = result.countIn
+        totalFrames = result.totalSamples
+        loopStartFrame = result.bodyStart.coerceIn(0, result.totalSamples)
+        sampleRate = result.sampleRate
+        positionFrames = 0
+    }
+
+    /** Live update of an instrument's gain (0 = muted). */
+    fun setGain(name: String, gain: Float) {
+        stems.firstOrNull { it.name == name }?.gain = gain
     }
 
     fun play() {
-        if (isPlaying || pcm.isEmpty()) return
+        if (isPlaying || stems.isEmpty() || totalFrames == 0) return
 
         // Prefer 32-bit float output; fall back to 16-bit PCM on devices that
         // don't support a float AudioTrack (avoids a hard crash on play).
@@ -51,7 +72,9 @@ class TrackPlayer {
         at.play()
         isPlaying = true
 
-        val totalFrames = pcm.size / 2
+        val activeStems = stems
+        val ci = countIn
+        val total = totalFrames
         job = scope.launch {
             try {
                 val chunkFrames = 2048
@@ -60,9 +83,23 @@ class TrackPlayer {
                 var frame = positionFrames
                 while (isActive) {
                     var n = 0
-                    while (n < chunkFrames && frame < totalFrames) {
-                        val l = pcm[frame * 2]
-                        val r = pcm[frame * 2 + 1]
+                    while (n < chunkFrames && frame < total) {
+                        var l = 0f
+                        var r = 0f
+                        for (st in activeStems) {
+                            val g = st.gain
+                            if (g != 0f) {
+                                val v = st.mono[frame] * g
+                                l += v * st.lpan
+                                r += v * st.rpan
+                            }
+                        }
+                        if (frame < ci.size) {
+                            l += ci[frame]
+                            r += ci[frame]
+                        }
+                        l = Renderer.softClip(l)
+                        r = Renderer.softClip(r)
                         if (useFloat) {
                             fchunk[n * 2] = l
                             fchunk[n * 2 + 1] = r
@@ -80,12 +117,12 @@ class TrackPlayer {
                             at.write(schunk, 0, n * 2, AudioTrack.WRITE_BLOCKING)
                         }
                         positionFrames = frame
-                        onPosition?.invoke(frame.toFloat() / totalFrames)
+                        onPosition?.invoke(frame.toFloat() / total)
                     }
-                    if (frame >= totalFrames) {
+                    if (frame >= total) {
                         if (loop) {
-                            frame = 0
-                            positionFrames = 0
+                            frame = loopStartFrame
+                            positionFrames = loopStartFrame
                         } else {
                             break
                         }
@@ -152,7 +189,6 @@ class TrackPlayer {
     }
 
     fun seekTo(fraction: Float) {
-        val totalFrames = pcm.size / 2
         positionFrames = (fraction.coerceIn(0f, 1f) * totalFrames).toInt()
     }
 

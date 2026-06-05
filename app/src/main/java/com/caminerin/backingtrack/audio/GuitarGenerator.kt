@@ -17,6 +17,7 @@ class GuitarGenerator(
     private val humanizer: Humanizer,
 ) {
     private val rng = Random(recipe.seed xor 0x47545253)
+    private val variant = rng.nextInt(0, 3)
     private val strumSpread = (SAMPLE_RATE * 0.012).toInt() // 12 ms across the voicing
 
     fun generate(bars: List<Conductor.BarPlan>): List<RenderEvent> {
@@ -61,13 +62,25 @@ class GuitarGenerator(
         val e = bar.energy
         when (recipe.style) {
             Style.BLUES, Style.BLUES_ROCK -> {
-                // Comp on the off-beats with a shuffle; sparser = more room.
-                for (beat in 0 until 4) {
-                    if (beat == 0 || beat == 2 || rng.nextFloat() < 0.5f) {
-                        strum(out, bar.index, beat.toDouble(), chord, 0.5f + 0.1f * e, up = false)
+                when (variant) {
+                    // Charleston-style: downbeat + the 'and' of 2, lots of room.
+                    1 -> {
+                        strum(out, bar.index, 0.0, chord, 0.5f + 0.1f * e, up = false)
+                        strum(out, bar.index, 2.5, chord, 0.4f, up = true)
+                        if (recipe.feel != Feel.STRAIGHT && rng.nextFloat() < 0.5f) {
+                            strum(out, bar.index, 3.5, chord, 0.32f, up = true)
+                        }
                     }
-                    if (recipe.feel != Feel.STRAIGHT && rng.nextFloat() < 0.6f) {
-                        strum(out, bar.index, beat + 0.5, chord, 0.34f, up = true)
+                    else -> {
+                        // Comp on the off-beats with a shuffle; sparser = more room.
+                        for (beat in 0 until 4) {
+                            if (beat == 0 || beat == 2 || rng.nextFloat() < 0.5f) {
+                                strum(out, bar.index, beat.toDouble(), chord, 0.5f + 0.1f * e, up = false)
+                            }
+                            if (recipe.feel != Feel.STRAIGHT && rng.nextFloat() < 0.6f) {
+                                strum(out, bar.index, beat + 0.5, chord, 0.34f, up = true)
+                            }
+                        }
                     }
                 }
             }

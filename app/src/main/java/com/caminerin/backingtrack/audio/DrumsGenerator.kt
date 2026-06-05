@@ -16,6 +16,9 @@ class DrumsGenerator(
     private val humanizer: Humanizer,
 ) {
     private val rng = Random(recipe.seed xor 0x44524D53)
+    // Seed-derived groove variant so the "random" button changes the feel,
+    // not just the micro-timing.
+    private val variant = rng.nextInt(0, 3)
 
     fun generate(bars: List<Conductor.BarPlan>): List<RenderEvent> {
         val out = ArrayList<RenderEvent>(bars.size * 16)
@@ -56,6 +59,10 @@ class DrumsGenerator(
                 emit(out, b, 0.0, "kick", 0.8f)
                 emit(out, b, 2.0, "kick", 0.72f)
                 if (e > 0.55f) emit(out, b, 2.5, "kick", 0.5f)
+                when (variant) {
+                    1 -> emit(out, b, 3.5, "kick", 0.5f)
+                    2 -> emit(out, b, 1.5, "kick", 0.45f)
+                }
                 emit(out, b, 1.0, "snare", 0.78f)
                 emit(out, b, 3.0, "snare", 0.82f)
             }
@@ -68,6 +75,7 @@ class DrumsGenerator(
                 emit(out, b, 1.5, "kick", 0.6f)
                 emit(out, b, 2.0, "kick", 0.7f)
                 if (e > 0.6f) emit(out, b, 3.5, "kick", 0.5f)
+                if (variant == 2) emit(out, b, 2.5, "kick", 0.5f)
                 emit(out, b, 1.0, "snare", 0.82f)
                 emit(out, b, 3.0, "snare", 0.85f)
             }

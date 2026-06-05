@@ -113,17 +113,33 @@ class AppViewModel(app: Application) : AndroidViewModel(app) {
 
     fun setProgression(chords: List<Chord>) = updateRecipe { it.copy(progression = chords) }
 
-    fun setInstrumentEnabled(inst: String, enabled: Boolean) = updateRecipe { r ->
-        val m = r.instruments.toMutableMap()
-        m[inst] = (m[inst] ?: com.caminerin.backingtrack.model.InstrumentMix()).copy(enabled = enabled)
-        r.copy(instruments = m)
+    fun setInstrumentEnabled(inst: String, enabled: Boolean) {
+        updateRecipe { r ->
+            val m = r.instruments.toMutableMap()
+            m[inst] = (m[inst] ?: com.caminerin.backingtrack.model.InstrumentMix()).copy(enabled = enabled)
+            r.copy(instruments = m)
+        }
+        applyMix(inst)
     }
 
-    fun setInstrumentVolume(inst: String, volume: Float) = updateRecipe { r ->
-        val m = r.instruments.toMutableMap()
-        m[inst] = (m[inst] ?: com.caminerin.backingtrack.model.InstrumentMix()).copy(volume = volume)
-        r.copy(instruments = m)
+    fun setInstrumentVolume(inst: String, volume: Float) {
+        updateRecipe { r ->
+            val m = r.instruments.toMutableMap()
+            m[inst] = (m[inst] ?: com.caminerin.backingtrack.model.InstrumentMix()).copy(volume = volume)
+            r.copy(instruments = m)
+        }
+        applyMix(inst)
     }
+
+    /** Push the live volume/mute for one instrument to the player (no re-render). */
+    private fun applyMix(inst: String) {
+        val mix = _recipe.value.instruments[inst]
+        player.setGain(inst, if (mix?.enabled == true) mix.volume else 0f)
+    }
+
+    /** Per-instrument gains for the current mix (0 = muted). */
+    private fun currentGains(): Map<String, Float> =
+        _recipe.value.instruments.mapValues { (_, m) -> if (m.enabled) m.volume else 0f }
 
     fun reseed() = updateRecipe { it.copy(seed = System.currentTimeMillis()) }
 
@@ -140,7 +156,7 @@ class AppViewModel(app: Application) : AndroidViewModel(app) {
             runCatching {
                 val result = r.render(_recipe.value) { p -> _renderProgress.value = p }
                 lastRender = result
-                player.load(result.pcm, result.sampleRate)
+                player.load(result, currentGains())
                 player.loop = _loop.value
                 withContext(Dispatchers.Main) {
                     _hasRendered.value = true
@@ -191,10 +207,11 @@ class AppViewModel(app: Application) : AndroidViewModel(app) {
             val item = runCatching {
                 val ext = if (format == "m4a") "m4a" else "wav"
                 val out = repo.audioFile(r.id, ext)
+                val pcm = Renderer.mixdown(result, currentGains())
                 if (format == "m4a") {
-                    AudioExporter.writeM4a(out, result.pcm, result.sampleRate)
+                    AudioExporter.writeM4a(out, pcm, result.sampleRate)
                 } else {
-                    AudioExporter.writeWav(out, result.pcm, result.sampleRate)
+                    AudioExporter.writeWav(out, pcm, result.sampleRate)
                 }
                 val item = LibraryItem(
                     id = r.id,
@@ -222,8 +239,9 @@ class AppViewModel(app: Application) : AndroidViewModel(app) {
                 val ext = if (format == "m4a") "m4a" else "wav"
                 val dir = File(getApplication<Application>().cacheDir, "exports").apply { mkdirs() }
                 val out = File(dir, "${trackTitle(r)}.$ext")
-                if (format == "m4a") AudioExporter.writeM4a(out, result.pcm, result.sampleRate)
-                else AudioExporter.writeWav(out, result.pcm, result.sampleRate)
+                val pcm = Renderer.mixdown(result, currentGains())
+                if (format == "m4a") AudioExporter.writeM4a(out, pcm, result.sampleRate)
+                else AudioExporter.writeWav(out, pcm, result.sampleRate)
                 out
             }.getOrNull()
             withContext(Dispatchers.Main) { onDone(file) }

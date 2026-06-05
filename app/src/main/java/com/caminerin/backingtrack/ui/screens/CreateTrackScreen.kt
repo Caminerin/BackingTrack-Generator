@@ -47,6 +47,7 @@ import com.caminerin.backingtrack.ui.Routes
 fun CreateTrackScreen(vm: AppViewModel, nav: NavController) {
     val recipe by vm.recipe.collectAsState()
     val ready by vm.engineReady.collectAsState()
+    val anyInstrument = recipe.instruments.values.any { it.enabled }
 
     Column(Modifier.fillMaxWidth()) {
         TopAppBar(
@@ -130,7 +131,7 @@ fun CreateTrackScreen(vm: AppViewModel, nav: NavController) {
                 vm.generate()
                 nav.navigate(Routes.PLAYER)
             },
-            enabled = ready,
+            enabled = ready && anyInstrument,
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(20.dp)
@@ -138,7 +139,12 @@ fun CreateTrackScreen(vm: AppViewModel, nav: NavController) {
         ) {
             Icon(Icons.Default.GraphicEq, contentDescription = null)
             Spacer(Modifier.size(8.dp))
-            Text(if (ready) "Generar y reproducir" else "Cargando instrumentos…", fontSize = 17.sp)
+            val label = when {
+                !ready -> "Cargando instrumentos…"
+                !anyInstrument -> "Elige al menos un instrumento"
+                else -> "Generar y reproducir"
+            }
+            Text(label, fontSize = 17.sp)
         }
     }
 }

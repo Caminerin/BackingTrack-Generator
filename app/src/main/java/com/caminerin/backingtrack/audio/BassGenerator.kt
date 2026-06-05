@@ -16,6 +16,7 @@ class BassGenerator(
     private val humanizer: Humanizer,
 ) {
     private val rng = Random(recipe.seed xor 0x42415353)
+    private val variant = rng.nextInt(0, 3)
 
     fun generate(bars: List<Conductor.BarPlan>): List<RenderEvent> {
         val out = ArrayList<RenderEvent>(bars.size * 8)
@@ -49,9 +50,24 @@ class BassGenerator(
                 // Walking-ish shuffle: root, third, fifth, sixth pattern.
                 val sixth = root + 9
                 emit(out, bar.index, 0.0, root, 0.8f)
-                emit(out, bar.index, 1.0, fifth, 0.7f)
-                emit(out, bar.index, 2.0, sixth, 0.72f)
-                emit(out, bar.index, 3.0, fifth, 0.68f)
+                // Walking variants keep the random button musically distinct.
+                when (variant) {
+                    0 -> {
+                        emit(out, bar.index, 1.0, fifth, 0.7f)
+                        emit(out, bar.index, 2.0, sixth, 0.72f)
+                        emit(out, bar.index, 3.0, fifth, 0.68f)
+                    }
+                    1 -> {
+                        emit(out, bar.index, 1.0, octave, 0.7f)
+                        emit(out, bar.index, 2.0, fifth, 0.72f)
+                        emit(out, bar.index, 3.0, sixth, 0.68f)
+                    }
+                    else -> {
+                        emit(out, bar.index, 1.0, third, 0.7f)
+                        emit(out, bar.index, 2.0, fifth, 0.72f)
+                        emit(out, bar.index, 3.0, sixth, 0.68f)
+                    }
+                }
                 if (bar.energy > 0.55f) emit(out, bar.index, 3.5, approach(next, root), 0.5f)
             }
             Style.CLASSIC_ROCK -> {
