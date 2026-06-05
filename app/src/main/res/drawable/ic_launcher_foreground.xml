@@ -34,7 +34,7 @@
 
     <!-- Baseline -->
     <path
-        android:strokeColor="#66FFD4960A"
+        android:strokeColor="#66D4960A"
         android:strokeWidth="2.5"
         android:strokeLineCap="round"
         android:pathData="M30,79 L82,79" />
