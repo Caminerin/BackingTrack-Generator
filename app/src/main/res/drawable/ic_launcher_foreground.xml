@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+
+    <!-- Guitar body wood circle -->
+    <path
+        android:fillColor="#3E2723"
+        android:pathData="M54,54 m-34,0 a34,34 0 1,1 68,0 a34,34 0 1,1 -68,0" />
+
+    <!-- Outer rosette ring (coral) -->
+    <path
+        android:fillColor="#00000000"
+        android:strokeColor="#FF6D4C"
+        android:strokeWidth="1.2"
+        android:pathData="M54,54 m-28,0 a28,28 0 1,1 56,0 a28,28 0 1,1 -56,0" />
+
+    <!-- Main rosette ring (gold) -->
+    <path
+        android:fillColor="#00000000"
+        android:strokeColor="#FFC107"
+        android:strokeWidth="3"
+        android:pathData="M54,54 m-24.5,0 a24.5,24.5 0 1,1 49,0 a24.5,24.5 0 1,1 -49,0" />
+
+    <!-- Inner rosette ring (yellow) -->
+    <path
+        android:fillColor="#00000000"
+        android:strokeColor="#FFE66D"
+        android:strokeWidth="1.2"
+        android:pathData="M54,54 m-21.5,0 a21.5,21.5 0 1,1 43,0 a21.5,21.5 0 1,1 -43,0" />
+
+    <!-- Sound hole (dark) -->
+    <path
+        android:fillColor="#0D0D1A"
+        android:pathData="M54,54 m-17,0 a17,17 0 1,1 34,0 a17,17 0 1,1 -34,0" />
+
+    <!-- Strings -->
+    <path
+        android:fillColor="#00000000"
+        android:strokeColor="#FFC107"
+        android:strokeWidth="0.8"
+        android:pathData="M47,20 L47,88" />
+    <path
+        android:fillColor="#00000000"
+        android:strokeColor="#FFC107"
+        android:strokeWidth="0.7"
+        android:pathData="M50.5,20 L50.5,88" />
+    <path
+        android:fillColor="#00000000"
+        android:strokeColor="#FFC107"
+        android:strokeWidth="0.6"
+        android:pathData="M54,20 L54,88" />
+    <path
+        android:fillColor="#00000000"
+        android:strokeColor="#FFC107"
+        android:strokeWidth="0.6"
+        android:pathData="M57.5,20 L57.5,88" />
+    <path
+        android:fillColor="#00000000"
+        android:strokeColor="#FFC107"
+        android:strokeWidth="0.7"
+        android:pathData="M61,20 L61,88" />
+
+    <!-- GT text - G -->
+    <path
+        android:fillColor="#FFC107"
+        android:pathData="M51,50 C48,50 46,52 46,54.5 C46,57 48,59 51,59 L51,55.5 L49.5,55.5 L49.5,54.5 L52.5,54.5 L52.5,59.5 C51.8,59.8 51,60 50.5,60 C47,60 45,57.5 45,54.5 C45,51.5 47,49 50.5,49 C51.8,49 53,49.5 53.5,50 L52.5,51 C52,50.5 51.5,50 51,50 Z" />
+
+    <!-- GT text - T -->
+    <path
+        android:fillColor="#FFC107"
+        android:pathData="M55,49.5 L61,49.5 L61,50.8 L58.8,50.8 L58.8,60 L57.2,60 L57.2,50.8 L55,50.8 Z" />
+
+</vector>
