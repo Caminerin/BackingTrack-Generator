@@ -4,12 +4,13 @@ import com.caminerin.backingtrack.model.Feel
 import com.caminerin.backingtrack.model.JamRecipe
 import com.caminerin.backingtrack.model.Style
 import com.caminerin.backingtrack.model.Chord
+import com.caminerin.backingtrack.model.ChordQuality
 import kotlin.random.Random
 
 /**
- * Generates piano comping. Plays sustained / rhythmic chord voicings in a register
- * above the bass and slightly apart from the rhythm guitar, supporting the harmony
- * without crowding the lead.
+ * Piano comping with rootless / shell voicings (3rd, b7, 9th colour) placed in a
+ * register above the rhythm guitar so the two don't turn to mud. The bass owns
+ * the root, so the piano leaves it out. Comps with space and a soft hand.
  */
 class KeysGenerator(
     private val recipe: JamRecipe,
@@ -18,23 +19,33 @@ class KeysGenerator(
 ) {
     private val rng = Random(recipe.seed xor 0x4B455953)
 
-    /** Piano voicing in the mid register (MIDI ~55-76). */
+    /** Rootless voicing (3rd, 6th/7th, 9th) in MIDI ~60-81. */
     private fun voicing(chord: Chord): List<Int> {
-        val base = 55 + chord.rootSemitone
-        val notes = chord.quality.intervals.map { base + it }
-        return notes.map { n ->
-            var x = n
-            while (x > 76) x -= 12
-            while (x < 55) x += 12
+        val r = chord.rootSemitone
+        val q = chord.quality
+        val tones = mutableListOf<Int>()
+        tones.add(r + q.intervals.getOrElse(1) { 4 }) // 3rd
+        when (q) {
+            ChordQuality.DOM7, ChordQuality.DOM9 -> { tones.add(r + 10); tones.add(r + 14) } // b7 + 9
+            ChordQuality.MIN7 -> { tones.add(r + 10); tones.add(r + 14) }
+            ChordQuality.MAJ7 -> { tones.add(r + 11); tones.add(r + 14) }
+            ChordQuality.MINOR -> { tones.add(r + 7); tones.add(r + 14) }
+            ChordQuality.MAJOR -> { tones.add(r + 7); tones.add(r + 9) }
+            else -> { tones.add(r + 7) }
+        }
+        val base = 60
+        return tones.map { n ->
+            var x = base + (n % 12)
+            while (x < 60) x += 12
+            while (x > 81) x -= 12
             x
         }.distinct().sorted()
     }
 
-    private fun chordHit(out: MutableList<RenderEvent>, barIdx: Int, beat: Double, chord: Chord, vel: Float) {
+    private fun chordHit(out: MutableList<RenderEvent>, sample: Int, chord: Chord, vel: Float) {
         val notes = voicing(chord)
-        val baseSample = timing.sampleAt(barIdx, beat) + humanizer.offsetSamples()
-        // Small roll across the voicing for a natural feel.
-        val roll = (SAMPLE_RATE * 0.006).toInt()
+        val baseSample = sample + humanizer.offsetSamples()
+        val roll = (SAMPLE_RATE * 0.006).toInt() // small natural roll
         for ((k, midi) in notes.withIndex()) {
             out.add(
                 RenderEvent(
@@ -51,25 +62,25 @@ class KeysGenerator(
         for (bar in bars) {
             val chord = bar.chord
             val e = bar.energy
+            val b = bar.index
             when (recipe.style) {
                 Style.FUNK -> {
-                    // Stabs on syncopated points.
                     for (h in listOf(0.0, 1.5, 2.5, 3.5)) {
-                        if (rng.nextFloat() < 0.7f) chordHit(out, bar.index, h, chord, 0.42f)
+                        if (rng.nextFloat() < 0.65f) chordHit(out, timing.at(b, h), chord, 0.4f)
                     }
                 }
                 Style.CLASSIC_ROCK, Style.BLUES_ROCK -> {
-                    chordHit(out, bar.index, 0.0, chord, 0.45f + 0.1f * e)
-                    chordHit(out, bar.index, 2.0, chord, 0.4f)
-                    if (e > 0.6f) chordHit(out, bar.index, 3.0, chord, 0.35f)
+                    chordHit(out, timing.at(b, 0.0), chord, 0.42f + 0.1f * e)
+                    if (e > 0.55f) chordHit(out, timing.eighth(b, 2, true), chord, 0.34f)
                 }
                 Style.BLUES -> {
-                    chordHit(out, bar.index, 0.0, chord, 0.4f)
-                    if (recipe.feel != Feel.STRAIGHT) chordHit(out, bar.index, 2.5, chord, 0.3f)
+                    // Sparse off-beat comp, leaving room for guitar + lead.
+                    chordHit(out, timing.eighth(b, 1, true), chord, 0.34f)
+                    if (recipe.feel != Feel.STRAIGHT) chordHit(out, timing.eighth(b, 3, true), chord, 0.32f)
                 }
                 Style.SLOW_BALLAD -> {
-                    // Sustained whole-note pad-like chords.
-                    chordHit(out, bar.index, 0.0, chord, 0.4f)
+                    chordHit(out, timing.at(b, 0.0), chord, 0.4f)
+                    if (recipe.feel == Feel.TWELVE_EIGHT) chordHit(out, timing.trip(b, 2, 0), chord, 0.32f)
                 }
             }
         }

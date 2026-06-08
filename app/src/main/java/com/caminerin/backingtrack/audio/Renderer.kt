@@ -31,10 +31,18 @@ class Renderer(private val pack: SamplePack) {
     private data class BusConfig(val pan: Float, val gain: Float)
 
     private val busConfigs = mapOf(
-        "drums" to BusConfig(0f, 0.9f),
+        "drums" to BusConfig(0f, 0.92f),
         "bass" to BusConfig(0f, 1.0f),
-        "guitar" to BusConfig(-0.25f, 0.7f),
-        "keys" to BusConfig(0.25f, 0.6f),
+        "guitar" to BusConfig(-0.28f, 0.72f),
+        "keys" to BusConfig(0.28f, 0.62f),
+    )
+
+    /** Reverb wet amount per bus (bass kept nearly dry to avoid low-end mud). */
+    private val reverbWet = mapOf(
+        "drums" to 0.10f,
+        "bass" to 0.03f,
+        "guitar" to 0.18f,
+        "keys" to 0.20f,
     )
 
     fun render(recipe: JamRecipe, progress: ((Float) -> Unit)? = null): RenderResult {
@@ -76,6 +84,10 @@ class Renderer(private val pack: SamplePack) {
                     val gate = gates?.get(idx) ?: Int.MAX_VALUE
                     mixEventMono(buf, ev, entry, bodyStart, cfg.gain, gate)
                 }
+            }
+            // Light room reverb for glue (skipped in QUICK mode for speed).
+            if (recipe.quality == GenerationQuality.BEST) {
+                applyReverb(buf, reverbWet[inst] ?: 0f)
             }
             stems[inst] = buf
             pans[inst] = cfg.pan
@@ -232,6 +244,49 @@ class Renderer(private val pack: SamplePack) {
         if (factor == 1f) return
         for (buf in stems.values) for (i in buf.indices) buf[i] *= factor
         for (i in countIn.indices) countIn[i] *= factor
+    }
+
+    /**
+     * In-place light room reverb (reduced Freeverb: 4 parallel comb filters into
+     * 2 series all-pass filters). [wet] is the dry/wet blend; the dry signal is
+     * preserved so live mixing still works on the stem.
+     */
+    private fun applyReverb(buf: FloatArray, wet: Float, roomSize: Float = 0.72f, damp: Float = 0.4f) {
+        if (wet <= 0f) return
+        val combTunings = intArrayOf(1116, 1188, 1277, 1356)
+        val apTunings = intArrayOf(556, 441)
+        val feedback = roomSize * 0.28f + 0.7f
+        val n = buf.size
+        val wetBuf = FloatArray(n)
+        // Parallel comb filters with one-pole low-pass damping in the feedback.
+        for (tuning in combTunings) {
+            val delay = FloatArray(tuning)
+            var idx = 0
+            var lp = 0f
+            for (i in 0 until n) {
+                val out = delay[idx]
+                lp = out * (1 - damp) + lp * damp
+                delay[idx] = buf[i] + lp * feedback
+                idx++; if (idx >= tuning) idx = 0
+                wetBuf[i] += out
+            }
+        }
+        val combScale = 1f / combTunings.size
+        for (i in 0 until n) wetBuf[i] *= combScale
+        // Series all-pass filters to diffuse the tail.
+        for (tuning in apTunings) {
+            val delay = FloatArray(tuning)
+            var idx = 0
+            val g = 0.5f
+            for (i in 0 until n) {
+                val bufOut = delay[idx]
+                val input = wetBuf[i]
+                delay[idx] = input + bufOut * g
+                wetBuf[i] = bufOut - input * g
+                idx++; if (idx >= tuning) idx = 0
+            }
+        }
+        for (i in 0 until n) buf[i] = buf[i] + wetBuf[i] * wet
     }
 
     companion object {
