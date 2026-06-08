@@ -494,11 +494,10 @@
     ]
   },
   "drums": {
-    "instrument": "drums_acoustic",
-    "license": "CC-BY-4.0",
-    "source": "MuldjordKit (DrumGizmo / FreePats)",
-    "url": "https://freepats.zenvoid.org/Percussion/acoustic-drum-kit.html",
-    "attribution": "MuldjordKit by Muldjord, licensed CC-BY-4.0",
+    "instrument": "drums_virtuosity",
+    "license": "CC-BY-3.0",
+    "source": "Virtuosity Drums (DSmolken / Karoryfer)",
+    "url": "https://github.com/Caminerin/virtuosity_drums",
     "samples": [
       {
         "file": "drums/kick_soft_1.wav",
@@ -543,34 +542,16 @@
         "seq": 1
       },
       {
-        "file": "drums/snare_soft_2.wav",
-        "hit": "snare",
-        "vel": "soft",
-        "seq": 2
-      },
-      {
         "file": "drums/snare_mid_1.wav",
         "hit": "snare",
         "vel": "mid",
         "seq": 1
       },
       {
-        "file": "drums/snare_mid_2.wav",
-        "hit": "snare",
-        "vel": "mid",
-        "seq": 2
-      },
-      {
         "file": "drums/snare_hard_1.wav",
         "hit": "snare",
         "vel": "hard",
         "seq": 1
-      },
-      {
-        "file": "drums/snare_hard_2.wav",
-        "hit": "snare",
-        "vel": "hard",
-        "seq": 2
       },
       {
         "file": "drums/hh_closed_soft_1.wav",
@@ -681,42 +662,6 @@
         "seq": 2
       },
       {
-        "file": "drums/ride_bell_soft_1.wav",
-        "hit": "ride_bell",
-        "vel": "soft",
-        "seq": 1
-      },
-      {
-        "file": "drums/ride_bell_soft_2.wav",
-        "hit": "ride_bell",
-        "vel": "soft",
-        "seq": 2
-      },
-      {
-        "file": "drums/ride_bell_mid_1.wav",
-        "hit": "ride_bell",
-        "vel": "mid",
-        "seq": 1
-      },
-      {
-        "file": "drums/ride_bell_mid_2.wav",
-        "hit": "ride_bell",
-        "vel": "mid",
-        "seq": 2
-      },
-      {
-        "file": "drums/ride_bell_hard_1.wav",
-        "hit": "ride_bell",
-        "vel": "hard",
-        "seq": 1
-      },
-      {
-        "file": "drums/ride_bell_hard_2.wav",
-        "hit": "ride_bell",
-        "vel": "hard",
-        "seq": 2
-      },
-      {
         "file": "drums/crash_soft_1.wav",
         "hit": "crash",
         "vel": "soft",
@@ -759,22 +704,10 @@
         "seq": 1
       },
       {
-        "file": "drums/tom_hi_soft_2.wav",
-        "hit": "tom_hi",
-        "vel": "soft",
-        "seq": 2
-      },
-      {
         "file": "drums/tom_hi_mid_1.wav",
         "hit": "tom_hi",
         "vel": "mid",
         "seq": 1
-      },
-      {
-        "file": "drums/tom_hi_mid_2.wav",
-        "hit": "tom_hi",
-        "vel": "mid",
-        "seq": 2
       },
       {
         "file": "drums/tom_hi_hard_1.wav",
@@ -783,58 +716,10 @@
         "seq": 1
       },
       {
-        "file": "drums/tom_hi_hard_2.wav",
-        "hit": "tom_hi",
-        "vel": "hard",
-        "seq": 2
-      },
-      {
-        "file": "drums/tom_mid_soft_1.wav",
-        "hit": "tom_mid",
-        "vel": "soft",
-        "seq": 1
-      },
-      {
-        "file": "drums/tom_mid_soft_2.wav",
-        "hit": "tom_mid",
-        "vel": "soft",
-        "seq": 2
-      },
-      {
-        "file": "drums/tom_mid_mid_1.wav",
-        "hit": "tom_mid",
-        "vel": "mid",
-        "seq": 1
-      },
-      {
-        "file": "drums/tom_mid_mid_2.wav",
-        "hit": "tom_mid",
-        "vel": "mid",
-        "seq": 2
-      },
-      {
-        "file": "drums/tom_mid_hard_1.wav",
-        "hit": "tom_mid",
-        "vel": "hard",
-        "seq": 1
-      },
-      {
-        "file": "drums/tom_mid_hard_2.wav",
-        "hit": "tom_mid",
-        "vel": "hard",
-        "seq": 2
-      },
-      {
         "file": "drums/tom_lo_soft_1.wav",
         "hit": "tom_lo",
         "vel": "soft",
         "seq": 1
-      },
-      {
-        "file": "drums/tom_lo_soft_2.wav",
-        "hit": "tom_lo",
-        "vel": "soft",
-        "seq": 2
       },
       {
         "file": "drums/tom_lo_mid_1.wav",
@@ -843,58 +728,46 @@
         "seq": 1
       },
       {
-        "file": "drums/tom_lo_mid_2.wav",
-        "hit": "tom_lo",
-        "vel": "mid",
-        "seq": 2
-      },
-      {
         "file": "drums/tom_lo_hard_1.wav",
         "hit": "tom_lo",
         "vel": "hard",
         "seq": 1
       },
       {
-        "file": "drums/tom_lo_hard_2.wav",
-        "hit": "tom_lo",
-        "vel": "hard",
-        "seq": 2
+        "file": "drums/tom_hi_soft_1.wav",
+        "hit": "tom_mid",
+        "vel": "soft",
+        "seq": 1
       },
       {
-        "file": "drums/tom_floor_soft_1.wav",
+        "file": "drums/tom_hi_mid_1.wav",
+        "hit": "tom_mid",
+        "vel": "mid",
+        "seq": 1
+      },
+      {
+        "file": "drums/tom_hi_hard_1.wav",
+        "hit": "tom_mid",
+        "vel": "hard",
+        "seq": 1
+      },
+      {
+        "file": "drums/tom_lo_soft_1.wav",
         "hit": "tom_floor",
         "vel": "soft",
         "seq": 1
       },
       {
-        "file": "drums/tom_floor_soft_2.wav",
-        "hit": "tom_floor",
-        "vel": "soft",
-        "seq": 2
-      },
-      {
-        "file": "drums/tom_floor_mid_1.wav",
+        "file": "drums/tom_lo_mid_1.wav",
         "hit": "tom_floor",
         "vel": "mid",
         "seq": 1
       },
       {
-        "file": "drums/tom_floor_mid_2.wav",
-        "hit": "tom_floor",
-        "vel": "mid",
-        "seq": 2
-      },
-      {
-        "file": "drums/tom_floor_hard_1.wav",
+        "file": "drums/tom_lo_hard_1.wav",
         "hit": "tom_floor",
         "vel": "hard",
         "seq": 1
-      },
-      {
-        "file": "drums/tom_floor_hard_2.wav",
-        "hit": "tom_floor",
-        "vel": "hard",
-        "seq": 2
       }
     ]
   },

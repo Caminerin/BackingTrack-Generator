@@ -38,9 +38,15 @@ class GuitarGenerator(
         // 3rd defines major/minor.
         tones.add(r + q.intervals.getOrElse(1) { 4 })
         when (q) {
-            ChordQuality.DOM7, ChordQuality.DOM9 -> { tones.add(r + 9); tones.add(r + 10) } // 6th + b7
-            ChordQuality.MIN7 -> { tones.add(r + 7); tones.add(r + 10) }
-            ChordQuality.MAJ7 -> { tones.add(r + 7); tones.add(r + 11) }
+            ChordQuality.DOM7, ChordQuality.DOM9 -> { tones.add(r + 9); tones.add(r + 10) }
+            ChordQuality.DOM13 -> { tones.add(r + 10); tones.add(r + 9) } // b7 + 13(=6)
+            ChordQuality.DOM7SHARP9 -> { tones.add(r + 10); tones.add(r + 3) } // b7 + #9
+            ChordQuality.MIN7, ChordQuality.MIN9 -> { tones.add(r + 7); tones.add(r + 10) }
+            ChordQuality.MAJ7, ChordQuality.MAJ9 -> { tones.add(r + 7); tones.add(r + 11) }
+            ChordQuality.HALF_DIM7 -> { tones.add(r + 6); tones.add(r + 10) } // b5 + b7
+            ChordQuality.DIM7 -> { tones.add(r + 6); tones.add(r + 9) }
+            ChordQuality.MAJ6, ChordQuality.SIX9 -> { tones.add(r + 7); tones.add(r + 9) }
+            ChordQuality.MIN6 -> { tones.add(r + 7); tones.add(r + 9) }
             ChordQuality.POWER -> { tones.add(r + 7); tones.add(r + 12) }
             else -> { tones.add(r + 7) }
         }

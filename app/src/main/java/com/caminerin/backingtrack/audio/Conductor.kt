@@ -2,6 +2,7 @@ package com.caminerin.backingtrack.audio
 
 import com.caminerin.backingtrack.model.JamRecipe
 import com.caminerin.backingtrack.model.Chord
+import com.caminerin.backingtrack.model.Style
 
 /**
  * Builds the bar-by-bar timeline for an arrangement: which chord sounds in each
@@ -49,10 +50,15 @@ class Conductor(private val recipe: JamRecipe) {
         }
 
         val total = expanded.size
-        // Song-level shape: a short intro that lays back, a body that builds, and
-        // a one-bar outro, so the arrangement breathes instead of being flat.
-        val introBars = if (total >= 8) minOf(2, cycleLength) else 0
-        val outroBars = if (total >= 8) 1 else 0
+        // Style-aware song shape: intro length and outro length adapt so the
+        // arrangement breathes differently per genre.
+        val introBars = when {
+            total < 8 -> 0
+            recipe.style == Style.FUNK -> minOf(1, cycleLength) // funk gets right to it
+            recipe.style == Style.SLOW_BALLAD -> minOf(4, cycleLength)
+            else -> minOf(2, cycleLength) // blues, rock
+        }
+        val outroBars = if (total >= 8) minOf(2, total - introBars) else 0
         return expanded.mapIndexed { idx, chord ->
             val isLast = idx == total - 1
             val isIntro = idx < introBars
@@ -63,9 +69,12 @@ class Conductor(private val recipe: JamRecipe) {
             // Energy rises across the cycle and peaks into the turnaround/fill.
             val phrasePos = if (cycleLength > 1) barInCycle.toFloat() / (cycleLength - 1) else 0f
             // Macro arc across the whole song: soft intro, building body.
+            // Per-style energy macro: funk stays high, ballad breathes, blues/rock build.
             val macro = when {
-                isIntro -> 0.55f
-                isOutro -> 0.7f
+                isIntro -> if (recipe.style == Style.SLOW_BALLAD) 0.45f else 0.55f
+                isOutro -> if (recipe.style == Style.SLOW_BALLAD) 0.6f else 0.72f
+                recipe.style == Style.FUNK -> 0.88f + 0.12f * songPos
+                recipe.style == Style.SLOW_BALLAD -> 0.65f + 0.25f * songPos
                 else -> 0.8f + 0.2f * songPos
             }
             val baseEnergy = recipe.energy * macro

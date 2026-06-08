@@ -32,7 +32,16 @@ enum class ChordQuality(val displayName: String, val intervals: IntArray) {
     SUS2("sus2", intArrayOf(0, 2, 7)),
     SUS4("sus4", intArrayOf(0, 5, 7)),
     DOM9("9", intArrayOf(0, 4, 7, 10, 14)),
-    POWER("5", intArrayOf(0, 7));
+    POWER("5", intArrayOf(0, 7)),
+    MAJ6("6", intArrayOf(0, 4, 7, 9)),
+    MIN6("m6", intArrayOf(0, 3, 7, 9)),
+    SIX9("6/9", intArrayOf(0, 4, 7, 9, 14)),
+    MIN9("m9", intArrayOf(0, 3, 7, 10, 14)),
+    MAJ9("maj9", intArrayOf(0, 4, 7, 11, 14)),
+    DOM13("13", intArrayOf(0, 4, 7, 10, 14, 21)),
+    DOM7SHARP9("7#9", intArrayOf(0, 4, 7, 10, 15)),
+    HALF_DIM7("m7b5", intArrayOf(0, 3, 6, 10)),
+    DIM7("dim7", intArrayOf(0, 3, 6, 9));
 }
 
 data class Chord(

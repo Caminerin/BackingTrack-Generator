@@ -141,7 +141,13 @@ class AppViewModel(app: Application) : AndroidViewModel(app) {
     private fun currentGains(): Map<String, Float> =
         _recipe.value.instruments.mapValues { (_, m) -> if (m.enabled) m.volume else 0f }
 
-    fun reseed() = updateRecipe { it.copy(seed = System.currentTimeMillis()) }
+    fun reseed() = updateRecipe {
+        val newSeed = System.currentTimeMillis()
+        it.copy(
+            seed = newSeed,
+            progression = Progressions.randomFor(it.style, it.keySemitone, newSeed),
+        )
+    }
 
     // ---- Render & playback ----
 

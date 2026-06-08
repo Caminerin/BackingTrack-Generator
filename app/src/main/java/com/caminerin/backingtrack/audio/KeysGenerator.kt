@@ -26,9 +26,15 @@ class KeysGenerator(
         val tones = mutableListOf<Int>()
         tones.add(r + q.intervals.getOrElse(1) { 4 }) // 3rd
         when (q) {
-            ChordQuality.DOM7, ChordQuality.DOM9 -> { tones.add(r + 10); tones.add(r + 14) } // b7 + 9
-            ChordQuality.MIN7 -> { tones.add(r + 10); tones.add(r + 14) }
-            ChordQuality.MAJ7 -> { tones.add(r + 11); tones.add(r + 14) }
+            ChordQuality.DOM7, ChordQuality.DOM9 -> { tones.add(r + 10); tones.add(r + 14) }
+            ChordQuality.DOM13 -> { tones.add(r + 10); tones.add(r + 9) } // b7 + 13
+            ChordQuality.DOM7SHARP9 -> { tones.add(r + 10); tones.add(r + 15) } // b7 + #9
+            ChordQuality.MIN7, ChordQuality.MIN9 -> { tones.add(r + 10); tones.add(r + 14) }
+            ChordQuality.MAJ7, ChordQuality.MAJ9 -> { tones.add(r + 11); tones.add(r + 14) }
+            ChordQuality.HALF_DIM7 -> { tones.add(r + 6); tones.add(r + 10) }
+            ChordQuality.DIM7 -> { tones.add(r + 6); tones.add(r + 9) }
+            ChordQuality.MAJ6, ChordQuality.SIX9 -> { tones.add(r + 7); tones.add(r + 9) }
+            ChordQuality.MIN6 -> { tones.add(r + 7); tones.add(r + 9) }
             ChordQuality.MINOR -> { tones.add(r + 7); tones.add(r + 14) }
             ChordQuality.MAJOR -> { tones.add(r + 7); tones.add(r + 9) }
             else -> { tones.add(r + 7) }
