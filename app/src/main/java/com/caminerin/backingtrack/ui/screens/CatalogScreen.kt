@@ -160,7 +160,7 @@ fun CatalogScreen(vm: MainViewModel, nav: NavController) {
                 },
             )
 
-            LazyColumn(Modifier.fillMaxSize()) {
+            LazyColumn(Modifier.fillMaxWidth().weight(1f)) {
                 if (sections.isEmpty()) {
                     item {
                         Text(
