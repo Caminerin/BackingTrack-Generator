@@ -218,13 +218,16 @@ private fun FilterPanel(
     onClear: () -> Unit,
 ) {
     val anyFilter = selStyles.isNotEmpty() || selKeys.isNotEmpty() || selBpm.isNotEmpty()
+    val activeCount = selStyles.size + selKeys.size + selBpm.size
+    var open by remember { mutableStateOf(false) }
     Column(Modifier.fillMaxWidth().padding(top = 6.dp, bottom = 4.dp)) {
         Row(
-            Modifier.fillMaxWidth().padding(horizontal = 16.dp),
+            Modifier.fillMaxWidth().clickable { open = !open }
+                .padding(horizontal = 16.dp, vertical = 8.dp),
             verticalAlignment = Alignment.CenterVertically,
         ) {
             Text(
-                "Filtros",
+                if (activeCount > 0) "Filtros ($activeCount)" else "Filtros",
                 style = MaterialTheme.typography.titleSmall,
                 fontWeight = FontWeight.Bold,
                 modifier = Modifier.weight(1f),
@@ -235,11 +238,15 @@ private fun FilterPanel(
                     label = { Text("Limpiar") },
                     leadingIcon = { Icon(Icons.Default.Clear, null, Modifier.size(16.dp)) },
                 )
+                Spacer(Modifier.size(8.dp))
             }
+            Icon(if (open) Icons.Default.ExpandLess else Icons.Default.ExpandMore, null)
         }
-        ChipRow("Estilo", styleNames, selStyles)
-        ChipRow("Tonalidad", keyOptions, selKeys)
-        ChipRow("BPM", bpmOptions, selBpm)
+        if (open) {
+            ChipRow("Estilo", styleNames, selStyles)
+            ChipRow("Tonalidad", keyOptions, selKeys)
+            ChipRow("BPM", bpmOptions, selBpm)
+        }
     }
 }
 

@@ -12,11 +12,15 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.Canvas
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.filled.ExpandLess
+import androidx.compose.material.icons.filled.ExpandMore
 import androidx.compose.material.icons.filled.Lock
 import androidx.compose.material.icons.filled.Loop
 import androidx.compose.material.icons.filled.Pause
@@ -30,6 +34,7 @@ import androidx.compose.material3.FilterChip
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.IconButtonDefaults
+import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Scaffold
@@ -46,6 +51,11 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.StrokeCap
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.geometry.Size
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
@@ -59,6 +69,7 @@ fun PlayerScreen(vm: MainViewModel, nav: NavController) {
     val premium by vm.premium.collectAsState()
     val track = pb.track
     var showLock by remember { mutableStateOf(false) }
+    var metroOpen by remember { mutableStateOf(false) }
 
     Scaffold(
         topBar = {
@@ -127,11 +138,6 @@ fun PlayerScreen(vm: MainViewModel, nav: NavController) {
                     Icon(Icons.Default.Loop, "Bucle", modifier = Modifier.size(30.dp))
                 }
             }
-            Text(
-                if (pb.loop) "Bucle activado" else "Bucle desactivado",
-                style = MaterialTheme.typography.labelSmall,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
-            )
             Spacer(Modifier.height(20.dp))
 
             // Instruments (stems) on/off
@@ -162,20 +168,39 @@ fun PlayerScreen(vm: MainViewModel, nav: NavController) {
             // Metronome
             Card(Modifier.fillMaxWidth(), colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant)) {
                 Column(Modifier.padding(14.dp)) {
-                    Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
+                    Row(
+                        Modifier.fillMaxWidth().clickable { metroOpen = !metroOpen },
+                        verticalAlignment = Alignment.CenterVertically,
+                    ) {
                         Text("Metrónomo", fontWeight = FontWeight.SemiBold, modifier = Modifier.weight(1f))
                         OutlinedButton(onClick = { vm.toggleMetronome() }) {
                             Text(if (pb.metronome) "ON" else "OFF")
                         }
+                        Spacer(Modifier.size(8.dp))
+                        Icon(if (metroOpen) Icons.Default.ExpandLess else Icons.Default.ExpandMore, null)
                     }
-                    Spacer(Modifier.height(8.dp))
-                    Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                        Subdivision.values().forEach { sub ->
-                            FilterChip(
-                                selected = pb.subdivision == sub,
-                                onClick = { vm.setSubdivision(sub) },
-                                label = { Text(sub.label, style = MaterialTheme.typography.labelSmall) },
-                            )
+                    if (metroOpen) {
+                        Spacer(Modifier.height(8.dp))
+                        Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                            Subdivision.values().forEach { sub ->
+                                FilterChip(
+                                    selected = pb.subdivision == sub,
+                                    onClick = { vm.setSubdivision(sub) },
+                                    label = {
+                                        if (sub == Subdivision.TRIPLET) {
+                                            TripletIcon(
+                                                modifier = Modifier.semantics { contentDescription = sub.label },
+                                            )
+                                        } else {
+                                            Text(
+                                                sub.symbol,
+                                                style = MaterialTheme.typography.titleLarge,
+                                                modifier = Modifier.semantics { contentDescription = sub.label },
+                                            )
+                                        }
+                                    },
+                                )
+                            }
                         }
                     }
                 }
@@ -216,6 +241,45 @@ fun PlayerScreen(vm: MainViewModel, nav: NavController) {
             },
             dismissButton = { TextButton(onClick = { showLock = false }) { Text("Cerrar") } },
         )
+    }
+}
+
+/** Triplet figure: three eighth-note stems joined by a beam (♫ con 3 patas). */
+@Composable
+private fun TripletIcon(modifier: Modifier = Modifier) {
+    val tint = LocalContentColor.current
+    Canvas(modifier = modifier.size(width = 26.dp, height = 22.dp)) {
+        val stemW = 2.dp.toPx()
+        val beamH = 3.dp.toPx()
+        val headRx = 3.2.dp.toPx()
+        val headRy = 2.4.dp.toPx()
+        val top = size.height * 0.12f
+        val bottom = size.height * 0.86f
+        val xs = listOf(size.width * 0.18f, size.width * 0.5f, size.width * 0.82f)
+        // beam joining the three stems
+        drawLine(
+            color = tint,
+            start = Offset(xs.first(), top + beamH / 2f),
+            end = Offset(xs.last(), top + beamH / 2f),
+            strokeWidth = beamH,
+            cap = StrokeCap.Round,
+        )
+        xs.forEach { x ->
+            // stem
+            drawLine(
+                color = tint,
+                start = Offset(x, top),
+                end = Offset(x, bottom - headRy),
+                strokeWidth = stemW,
+                cap = StrokeCap.Round,
+            )
+            // filled note head
+            drawOval(
+                color = tint,
+                topLeft = Offset(x - headRx * 1.4f, bottom - headRy * 2f),
+                size = Size(headRx * 2f, headRy * 2f),
+            )
+        }
     }
 }
 

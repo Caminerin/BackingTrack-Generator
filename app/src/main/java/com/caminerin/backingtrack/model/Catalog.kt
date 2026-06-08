@@ -1,11 +1,11 @@
 package com.caminerin.backingtrack.model
 
 /** Metronome subdivisions the user can pick (clicks per quarter-note beat). */
-enum class Subdivision(val label: String, val perBeat: Int) {
-    QUARTER("Negras", 1),
-    EIGHTH("Corcheas", 2),
-    TRIPLET("Tresillos", 3),
-    SIXTEENTH("Semicorcheas", 4),
+enum class Subdivision(val label: String, val symbol: String, val perBeat: Int) {
+    QUARTER("Negras", "♩", 1),
+    EIGHTH("Corcheas", "♫", 2),
+    TRIPLET("Tresillos", "♪³", 3),
+    SIXTEENTH("Semicorcheas", "♬", 4),
 }
 
 /** One instrument track inside a backing (e.g. "Batería" -> drums.mp3). */
