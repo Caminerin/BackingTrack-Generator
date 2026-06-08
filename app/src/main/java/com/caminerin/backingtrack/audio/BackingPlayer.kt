@@ -28,6 +28,9 @@ class BackingPlayer(private val context: Context) {
     private var semitones: Int = 0
     private var targetBpm: Int = 120
     private var loop: Boolean = false
+    private var sectionActive: Boolean = false
+    private var sectionStartMs: Int = 0
+    private var sectionEndMs: Int = 0
     private var wantPlaying: Boolean = false
     private var readyFired = false
 
@@ -138,10 +141,30 @@ class BackingPlayer(private val context: Context) {
 
     fun setLoop(enabled: Boolean) {
         loop = enabled
-        stems.forEach { it.player.isLooping = enabled }
+        // Native whole-file looping; disabled while an A-B section loop is active.
+        stems.forEach { it.player.isLooping = enabled && !sectionActive }
     }
 
     fun loopEnabled() = loop
+
+    /** Repeat only the [startMs]..[endMs] region. */
+    fun setSectionLoop(startMs: Int, endMs: Int) {
+        sectionStartMs = startMs.coerceAtLeast(0)
+        sectionEndMs = endMs.coerceAtLeast(startMs + 200)
+        sectionActive = true
+        stems.forEach { it.player.isLooping = false }
+    }
+
+    fun clearSectionLoop() {
+        sectionActive = false
+        stems.forEach { it.player.isLooping = loop }
+    }
+
+    /** Called periodically: jumps back to A when reaching B. */
+    fun maybeLoopSection() {
+        if (!sectionActive || !wantPlaying) return
+        if (positionMs() >= sectionEndMs) seekTo(sectionStartMs)
+    }
 
     fun setSemitones(n: Int) {
         semitones = n.coerceIn(-12, 12)

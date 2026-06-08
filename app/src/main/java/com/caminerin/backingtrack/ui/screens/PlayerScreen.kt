@@ -13,10 +13,13 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.Canvas
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.ui.draw.clip
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.ExpandLess
@@ -57,9 +60,12 @@ import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import com.caminerin.backingtrack.model.ChordEvent
 import com.caminerin.backingtrack.model.Subdivision
+import com.caminerin.backingtrack.ui.LoopMode
 import com.caminerin.backingtrack.ui.MainViewModel
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalLayoutApi::class)
@@ -101,44 +107,21 @@ fun PlayerScreen(vm: MainViewModel, nav: NavController) {
             )
             Spacer(Modifier.height(16.dp))
 
-            // Chords on screen (synced to playback position)
+            // Chords on screen: 6-cell grid, the current one lit, advancing by page.
             if (track.chords.isNotEmpty()) {
-                val beatsElapsed = pb.positionMs / 1000.0 * track.bpm / 60.0
-                val curIdx = track.chords
-                    .indexOfLast { it.beat <= beatsElapsed }
-                    .let { if (it < 0) 0 else it }
-                val current = track.chords[curIdx]
-                val next = track.chords.getOrNull(curIdx + 1)
-                Card(
-                    Modifier.fillMaxWidth(),
-                    colors = CardDefaults.cardColors(
-                        containerColor = MaterialTheme.colorScheme.primaryContainer,
-                    ),
-                ) {
-                    Column(
-                        Modifier.fillMaxWidth().padding(vertical = 14.dp),
-                        horizontalAlignment = Alignment.CenterHorizontally,
-                    ) {
-                        Text(
-                            "Acorde",
-                            style = MaterialTheme.typography.labelSmall,
-                            color = MaterialTheme.colorScheme.onPrimaryContainer,
-                        )
-                        Text(
-                            current.name,
-                            style = MaterialTheme.typography.displaySmall,
-                            fontWeight = FontWeight.Bold,
-                            color = MaterialTheme.colorScheme.onPrimaryContainer,
-                        )
-                        if (next != null) {
-                            Text(
-                                "siguiente: ${next.name}",
-                                style = MaterialTheme.typography.labelMedium,
-                                color = MaterialTheme.colorScheme.onPrimaryContainer,
-                            )
-                        }
+                // Collapse consecutive duplicate chord names for a clean chart.
+                val chart = remember(track.id) {
+                    val out = ArrayList<com.caminerin.backingtrack.model.ChordEvent>()
+                    track.chords.forEach { c ->
+                        if (out.isEmpty() || out.last().name != c.name) out.add(c)
                     }
+                    out
                 }
+                val beatsElapsed = pb.positionMs / 1000.0 * track.bpm / 60.0
+                val curIdx = chart.indexOfLast { it.beat <= beatsElapsed }.let { if (it < 0) 0 else it }
+                val page = curIdx / 6
+                val window = chart.drop(page * 6).take(6)
+                ChordGrid(window = window, activeInWindow = curIdx - page * 6)
                 Spacer(Modifier.height(16.dp))
             }
             Spacer(Modifier.height(8.dp))
@@ -178,6 +161,59 @@ fun PlayerScreen(vm: MainViewModel, nav: NavController) {
                     ),
                 ) {
                     Icon(Icons.Default.Loop, "Bucle", modifier = Modifier.size(30.dp))
+                }
+            }
+
+            // Loop options: full song vs A-B section.
+            if (pb.loop) {
+                Spacer(Modifier.height(12.dp))
+                Card(
+                    Modifier.fillMaxWidth(),
+                    colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant),
+                ) {
+                    Column(Modifier.fillMaxWidth().padding(14.dp)) {
+                        Text("Bucle", fontWeight = FontWeight.SemiBold)
+                        Spacer(Modifier.height(8.dp))
+                        Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                            FilterChip(
+                                selected = pb.loopMode == LoopMode.FULL,
+                                onClick = { vm.setLoopMode(LoopMode.FULL) },
+                                label = { Text("Canción entera") },
+                            )
+                            FilterChip(
+                                selected = pb.loopMode == LoopMode.SECTION,
+                                onClick = { vm.setLoopMode(LoopMode.SECTION) },
+                                label = { Text("A → B") },
+                            )
+                        }
+                        if (pb.loopMode == LoopMode.SECTION) {
+                            Spacer(Modifier.height(10.dp))
+                            Row(
+                                Modifier.fillMaxWidth(),
+                                horizontalArrangement = Arrangement.spacedBy(8.dp),
+                            ) {
+                                OutlinedButton(
+                                    onClick = { vm.setLoopA() },
+                                    modifier = Modifier.weight(1f),
+                                ) { Text("Fijar A" + (pb.loopAms?.let { "\n${fmt(it)}" } ?: ""), textAlign = TextAlign.Center) }
+                                OutlinedButton(
+                                    onClick = { vm.setLoopB() },
+                                    modifier = Modifier.weight(1f),
+                                ) { Text("Fijar B" + (pb.loopBms?.let { "\n${fmt(it)}" } ?: ""), textAlign = TextAlign.Center) }
+                            }
+                            val a = pb.loopAms
+                            val b = pb.loopBms
+                            Text(
+                                if (a != null && b != null && b > a)
+                                    "Repitiendo ${fmt(a)} → ${fmt(b)}"
+                                else
+                                    "Pon A y B mientras suena para repetir ese trozo.",
+                                style = MaterialTheme.typography.labelSmall,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                                modifier = Modifier.padding(top = 6.dp),
+                            )
+                        }
+                    }
                 }
             }
             Spacer(Modifier.height(20.dp))
@@ -352,6 +388,52 @@ private fun ControlCard(
                 OutlinedButton(onClick = onMinus) { Text("–") }
                 Spacer(Modifier.size(8.dp))
                 OutlinedButton(onClick = onPlus) { Text("+") }
+            }
+        }
+    }
+}
+
+@Composable
+private fun ChordGrid(window: List<ChordEvent>, activeInWindow: Int) {
+    Card(
+        Modifier.fillMaxWidth(),
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant),
+    ) {
+        Column(Modifier.fillMaxWidth().padding(12.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
+            // Always lay out 6 slots (2 rows x 3) so the grid size is stable.
+            for (r in 0 until 2) {
+                Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                    for (c in 0 until 3) {
+                        val idx = r * 3 + c
+                        val chord = window.getOrNull(idx)
+                        val active = idx == activeInWindow
+                        val bg = when {
+                            active -> MaterialTheme.colorScheme.primary
+                            chord != null -> MaterialTheme.colorScheme.surface
+                            else -> Color.Transparent
+                        }
+                        val fg = when {
+                            active -> MaterialTheme.colorScheme.onPrimary
+                            chord != null -> MaterialTheme.colorScheme.onSurface
+                            else -> Color.Transparent
+                        }
+                        Box(
+                            Modifier
+                                .weight(1f)
+                                .height(56.dp)
+                                .clip(RoundedCornerShape(10.dp))
+                                .background(bg),
+                            contentAlignment = Alignment.Center,
+                        ) {
+                            Text(
+                                chord?.name ?: "",
+                                style = MaterialTheme.typography.titleLarge,
+                                fontWeight = FontWeight.Bold,
+                                color = fg,
+                            )
+                        }
+                    }
+                }
             }
         }
     }

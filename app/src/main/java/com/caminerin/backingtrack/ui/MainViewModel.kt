@@ -21,6 +21,8 @@ data class StemUi(
     val enabled: Boolean,
 )
 
+enum class LoopMode { FULL, SECTION }
+
 data class Playback(
     val track: Track? = null,
     val isPlaying: Boolean = false,
@@ -30,6 +32,9 @@ data class Playback(
     val bpm: Int = 120,
     val baseBpm: Int = 120,
     val loop: Boolean = false,
+    val loopMode: LoopMode = LoopMode.FULL,
+    val loopAms: Int? = null,
+    val loopBms: Int? = null,
     val metronome: Boolean = false,
     val subdivision: Subdivision = Subdivision.QUARTER,
     val stems: List<StemUi> = emptyList(),
@@ -61,7 +66,10 @@ class MainViewModel(app: Application) : AndroidViewModel(app) {
         viewModelScope.launch {
             while (true) {
                 if (player.isReady) {
-                    if (player.isPlaying) player.resync()
+                    if (player.isPlaying) {
+                        player.maybeLoopSection()
+                        player.resync()
+                    }
                     val p = _playback.value
                     _playback.value = p.copy(
                         positionMs = player.positionMs(),
@@ -69,7 +77,7 @@ class MainViewModel(app: Application) : AndroidViewModel(app) {
                         isPlaying = player.isPlaying,
                     )
                 }
-                delay(250)
+                delay(100)
             }
         }
     }
@@ -96,6 +104,7 @@ class MainViewModel(app: Application) : AndroidViewModel(app) {
             pushState()
         }
         player.load(track.stems.map { it.instrument to it.audio }, track.bpm)
+        player.clearSectionLoop()
         player.setLoop(false)
         metronome.stop()
         _playback.value = Playback(
@@ -105,6 +114,9 @@ class MainViewModel(app: Application) : AndroidViewModel(app) {
             bpm = track.bpm,
             baseBpm = track.bpm,
             loop = false,
+            loopMode = LoopMode.FULL,
+            loopAms = null,
+            loopBms = null,
             metronome = false,
             subdivision = Subdivision.QUARTER,
             stems = track.stems.map { StemUi(it.instrument, true) },
@@ -120,8 +132,50 @@ class MainViewModel(app: Application) : AndroidViewModel(app) {
     }
 
     fun setLoop(enabled: Boolean) {
-        player.setLoop(enabled)
+        val st = _playback.value
+        if (!enabled) {
+            player.clearSectionLoop()
+            player.setLoop(false)
+        } else {
+            applyLoop(st.loopMode, st.loopAms, st.loopBms)
+        }
+        _playback.value = _playback.value.copy(loop = enabled)
         pushState()
+    }
+
+    fun setLoopMode(mode: LoopMode) {
+        val st = _playback.value
+        if (st.loop) applyLoop(mode, st.loopAms, st.loopBms)
+        _playback.value = _playback.value.copy(loopMode = mode)
+    }
+
+    /** Sets the A point of the A-B loop to the current position. */
+    fun setLoopA() {
+        val a = player.positionMs()
+        val st = _playback.value
+        val b = st.loopBms?.takeIf { it > a }
+        _playback.value = st.copy(loopAms = a, loopBms = b, loopMode = LoopMode.SECTION)
+        if (st.loop) applyLoop(LoopMode.SECTION, a, b)
+    }
+
+    /** Sets the B point of the A-B loop to the current position. */
+    fun setLoopB() {
+        val b = player.positionMs()
+        val st = _playback.value
+        val a = st.loopAms?.takeIf { it < b } ?: 0
+        _playback.value = st.copy(loopAms = a, loopBms = b, loopMode = LoopMode.SECTION)
+        if (st.loop) applyLoop(LoopMode.SECTION, a, b)
+    }
+
+    private fun applyLoop(mode: LoopMode, aMs: Int?, bMs: Int?) {
+        if (mode == LoopMode.SECTION && aMs != null && bMs != null && bMs > aMs) {
+            player.setSectionLoop(aMs, bMs)
+            player.setLoop(false)
+        } else {
+            // No valid A-B yet (or full mode): loop the whole song.
+            player.clearSectionLoop()
+            player.setLoop(true)
+        }
     }
 
     fun setSemitones(n: Int) {
@@ -171,7 +225,6 @@ class MainViewModel(app: Application) : AndroidViewModel(app) {
             semitones = player.semitones(),
             bpm = player.currentBpm(),
             baseBpm = player.baseBpm(),
-            loop = player.loopEnabled(),
             positionMs = player.positionMs(),
             durationMs = player.durationMs(),
         )
