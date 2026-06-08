@@ -3,30 +3,34 @@ package com.caminerin.backingtrack.ui.screens
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material.icons.filled.ExpandLess
 import androidx.compose.material.icons.filled.ExpandMore
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.FavoriteBorder
 import androidx.compose.material.icons.filled.Lock
-import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.Star
 import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.AssistChip
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.FilterChip
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -35,6 +39,7 @@ import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateMapOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -51,37 +56,68 @@ import com.caminerin.backingtrack.model.Track
 import com.caminerin.backingtrack.ui.MainViewModel
 import com.caminerin.backingtrack.ui.Routes
 
+private val KEY_ORDER = listOf(
+    "C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B",
+)
+
+private fun keyRank(key: String): Int {
+    val minor = key.endsWith("m")
+    val root = if (minor) key.dropLast(1) else key
+    val idx = KEY_ORDER.indexOf(root)
+    return (if (idx < 0) 99 else idx) * 2 + if (minor) 1 else 0
+}
+
+private data class BpmBucket(val label: String, val min: Int, val max: Int)
+
+private val BPM_BUCKETS = listOf(
+    BpmBucket("< 90", 0, 89),
+    BpmBucket("90–109", 90, 109),
+    BpmBucket("110–129", 110, 129),
+    BpmBucket("130–149", 130, 149),
+    BpmBucket("150+", 150, 10000),
+)
+
+private fun bucketOf(bpm: Int): BpmBucket = BPM_BUCKETS.first { bpm in it.min..it.max }
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CatalogScreen(vm: MainViewModel, nav: NavController) {
-    val query by vm.query.collectAsState()
     val favorites by vm.favorites.collectAsState()
     val premium by vm.premium.collectAsState()
 
     val expanded = remember { mutableStateMapOf<String, Boolean>() }
     var lockedDialog by remember { mutableStateOf<Track?>(null) }
 
-    val favTracks = vm.styles.flatMap { it.tracks }.filter { favorites.contains(it.id) }
+    val selStyles = remember { mutableStateListOf<String>() }
+    val selKeys = remember { mutableStateListOf<String>() }
+    val selBpm = remember { mutableStateListOf<String>() }
 
-    val sections: List<Style> = remember(query, favorites) {
-        val q = query.trim().lowercase()
-        if (q.isEmpty()) {
+    val allTracks = remember { vm.styles.flatMap { it.tracks } }
+    val styleNames = remember { vm.styles.map { it.name } }
+    val keyOptions = remember { allTracks.map { it.key }.distinct().sortedBy { keyRank(it) } }
+    val bpmOptions = remember {
+        BPM_BUCKETS.filter { b -> allTracks.any { it.bpm in b.min..b.max } }.map { it.label }
+    }
+
+    val favTracks = vm.styles.flatMap { it.tracks }.filter { favorites.contains(it.id) }
+    val anyFilter = selStyles.isNotEmpty() || selKeys.isNotEmpty() || selBpm.isNotEmpty()
+
+    val sections: List<Style> =
+        if (!anyFilter) {
             buildList {
                 if (favTracks.isNotEmpty()) add(Style(FAVORITES_ID, "Favoritos", favTracks))
                 addAll(vm.styles)
             }
         } else {
             vm.styles.mapNotNull { s ->
+                if (selStyles.isNotEmpty() && !selStyles.contains(s.name)) return@mapNotNull null
                 val matched = s.tracks.filter { t ->
-                    t.title.lowercase().contains(q) ||
-                        t.styleName.lowercase().contains(q) ||
-                        t.key.lowercase() == q || t.key.lowercase().startsWith(q) ||
-                        t.bpm.toString().contains(q)
+                    (selKeys.isEmpty() || selKeys.contains(t.key)) &&
+                        (selBpm.isEmpty() || selBpm.contains(bucketOf(t.bpm).label))
                 }
                 if (matched.isEmpty()) null else s.copy(tracks = matched)
             }
         }
-    }
 
     Scaffold(
         topBar = {
@@ -95,18 +131,30 @@ fun CatalogScreen(vm: MainViewModel, nav: NavController) {
         }
     ) { pad ->
         Column(Modifier.fillMaxSize().padding(pad)) {
-            OutlinedTextField(
-                value = query,
-                onValueChange = vm::setQuery,
-                modifier = Modifier.fillMaxWidth().padding(12.dp),
-                leadingIcon = { Icon(Icons.Default.Search, null) },
-                singleLine = true,
-                placeholder = { Text("Buscar por estilo, tono (ej. A) o BPM (ej. 120)") },
+            FilterPanel(
+                styleNames = styleNames,
+                keyOptions = keyOptions,
+                bpmOptions = bpmOptions,
+                selStyles = selStyles,
+                selKeys = selKeys,
+                selBpm = selBpm,
+                onClear = {
+                    selStyles.clear(); selKeys.clear(); selBpm.clear()
+                },
             )
 
             LazyColumn(Modifier.fillMaxSize()) {
+                if (sections.isEmpty()) {
+                    item {
+                        Text(
+                            "No hay pistas con esos filtros.",
+                            modifier = Modifier.fillMaxWidth().padding(24.dp),
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        )
+                    }
+                }
                 sections.forEach { style ->
-                    val isOpen = expanded[style.id] ?: (query.isNotBlank() || style.id == FAVORITES_ID)
+                    val isOpen = expanded[style.id] ?: (anyFilter || style.id == FAVORITES_ID)
                     item(key = "h_${style.id}") {
                         StyleHeader(style, isOpen) { expanded[style.id] = !isOpen }
                     }
@@ -158,6 +206,68 @@ fun CatalogScreen(vm: MainViewModel, nav: NavController) {
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+private fun FilterPanel(
+    styleNames: List<String>,
+    keyOptions: List<String>,
+    bpmOptions: List<String>,
+    selStyles: MutableList<String>,
+    selKeys: MutableList<String>,
+    selBpm: MutableList<String>,
+    onClear: () -> Unit,
+) {
+    val anyFilter = selStyles.isNotEmpty() || selKeys.isNotEmpty() || selBpm.isNotEmpty()
+    Column(Modifier.fillMaxWidth().padding(top = 6.dp, bottom = 4.dp)) {
+        Row(
+            Modifier.fillMaxWidth().padding(horizontal = 16.dp),
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            Text(
+                "Filtros",
+                style = MaterialTheme.typography.titleSmall,
+                fontWeight = FontWeight.Bold,
+                modifier = Modifier.weight(1f),
+            )
+            if (anyFilter) {
+                AssistChip(
+                    onClick = onClear,
+                    label = { Text("Limpiar") },
+                    leadingIcon = { Icon(Icons.Default.Clear, null, Modifier.size(16.dp)) },
+                )
+            }
+        }
+        ChipRow("Estilo", styleNames, selStyles)
+        ChipRow("Tonalidad", keyOptions, selKeys)
+        ChipRow("BPM", bpmOptions, selBpm)
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+private fun ChipRow(label: String, options: List<String>, selected: MutableList<String>) {
+    Text(
+        label,
+        style = MaterialTheme.typography.labelMedium,
+        color = MaterialTheme.colorScheme.onSurfaceVariant,
+        modifier = Modifier.padding(start = 16.dp, top = 6.dp),
+    )
+    LazyRow(
+        modifier = Modifier.fillMaxWidth(),
+        contentPadding = PaddingValues(horizontal = 12.dp, vertical = 4.dp),
+        horizontalArrangement = Arrangement.spacedBy(8.dp),
+    ) {
+        items(options, key = { "${label}_$it" }) { opt ->
+            val isSel = selected.contains(opt)
+            FilterChip(
+                selected = isSel,
+                onClick = { if (isSel) selected.remove(opt) else selected.add(opt) },
+                label = { Text(opt) },
+            )
+        }
+    }
+}
+
 @Composable
 private fun StyleHeader(style: Style, open: Boolean, onToggle: () -> Unit) {
     Row(
@@ -167,7 +277,7 @@ private fun StyleHeader(style: Style, open: Boolean, onToggle: () -> Unit) {
     ) {
         if (style.id == FAVORITES_ID) {
             Icon(Icons.Default.Star, null, tint = MaterialTheme.colorScheme.primary)
-            androidx.compose.foundation.layout.Spacer(Modifier.size(8.dp))
+            Spacer(Modifier.size(8.dp))
         }
         Text(
             style.name,
@@ -180,7 +290,7 @@ private fun StyleHeader(style: Style, open: Boolean, onToggle: () -> Unit) {
             style = MaterialTheme.typography.labelMedium,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
         )
-        androidx.compose.foundation.layout.Spacer(Modifier.size(6.dp))
+        Spacer(Modifier.size(6.dp))
         Icon(if (open) Icons.Default.ExpandLess else Icons.Default.ExpandMore, null)
     }
 }
