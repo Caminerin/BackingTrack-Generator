@@ -99,7 +99,49 @@ fun PlayerScreen(vm: MainViewModel, nav: NavController) {
                 style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
             )
-            Spacer(Modifier.height(24.dp))
+            Spacer(Modifier.height(16.dp))
+
+            // Chords on screen (synced to playback position)
+            if (track.chords.isNotEmpty()) {
+                val beatsElapsed = pb.positionMs / 1000.0 * track.bpm / 60.0
+                val curIdx = track.chords
+                    .indexOfLast { it.beat <= beatsElapsed }
+                    .let { if (it < 0) 0 else it }
+                val current = track.chords[curIdx]
+                val next = track.chords.getOrNull(curIdx + 1)
+                Card(
+                    Modifier.fillMaxWidth(),
+                    colors = CardDefaults.cardColors(
+                        containerColor = MaterialTheme.colorScheme.primaryContainer,
+                    ),
+                ) {
+                    Column(
+                        Modifier.fillMaxWidth().padding(vertical = 14.dp),
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                    ) {
+                        Text(
+                            "Acorde",
+                            style = MaterialTheme.typography.labelSmall,
+                            color = MaterialTheme.colorScheme.onPrimaryContainer,
+                        )
+                        Text(
+                            current.name,
+                            style = MaterialTheme.typography.displaySmall,
+                            fontWeight = FontWeight.Bold,
+                            color = MaterialTheme.colorScheme.onPrimaryContainer,
+                        )
+                        if (next != null) {
+                            Text(
+                                "siguiente: ${next.name}",
+                                style = MaterialTheme.typography.labelMedium,
+                                color = MaterialTheme.colorScheme.onPrimaryContainer,
+                            )
+                        }
+                    }
+                }
+                Spacer(Modifier.height(16.dp))
+            }
+            Spacer(Modifier.height(8.dp))
 
             // Progress
             val dur = pb.durationMs.coerceAtLeast(1)

@@ -14,6 +14,12 @@ data class Stem(
     val audio: String,
 )
 
+/** A chord placed at a given quarter-note beat (0-based) from the song start. */
+data class ChordEvent(
+    val beat: Int,
+    val name: String,
+)
+
 data class Track(
     val id: String,
     val title: String,
@@ -25,6 +31,7 @@ data class Track(
     val timeSignature: String,
     val feel: String,
     val stems: List<Stem>,
+    val chords: List<ChordEvent>,
     val free: Boolean,
 )
 

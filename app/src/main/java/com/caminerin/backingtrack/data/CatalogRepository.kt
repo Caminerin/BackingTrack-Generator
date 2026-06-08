@@ -1,6 +1,7 @@
 package com.caminerin.backingtrack.data
 
 import android.content.Context
+import com.caminerin.backingtrack.model.ChordEvent
 import com.caminerin.backingtrack.model.Stem
 import com.caminerin.backingtrack.model.Style
 import com.caminerin.backingtrack.model.Track
@@ -33,6 +34,14 @@ object CatalogRepository {
                     // Backwards-compatible single mixed file.
                     stems.add(Stem("Pista", to.getString("audio")))
                 }
+                val chords = ArrayList<ChordEvent>()
+                val chordsJson = to.optJSONArray("chords")
+                if (chordsJson != null) {
+                    for (i in 0 until chordsJson.length()) {
+                        val cj = chordsJson.getJSONObject(i)
+                        chords.add(ChordEvent(cj.getInt("beat"), cj.getString("name")))
+                    }
+                }
                 tracks.add(
                     Track(
                         id = to.getString("id"),
@@ -45,6 +54,7 @@ object CatalogRepository {
                         timeSignature = to.optString("timeSignature", "4/4"),
                         feel = to.optString("feel", "Straight"),
                         stems = stems,
+                        chords = chords,
                         free = to.optBoolean("free", t < 2),
                     )
                 )
