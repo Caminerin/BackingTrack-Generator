@@ -1,964 +1,2608 @@
 {
- "styles": [
-  {
-   "id": "blues",
-   "name": "Blues",
-   "tracks": [
+  "styles": [
     {
-     "id": "blues_01",
-     "title": "12 Bar Blues",
-     "key": "D",
-     "bpm": 120,
-     "durationSec": 227,
-     "audio": "placeholder.mp3",
-     "free": true
+      "id": "blues",
+      "name": "Blues",
+      "tracks": [
+        {
+          "id": "blues_01",
+          "title": "Blues 01",
+          "key": "E",
+          "bpm": 85,
+          "durationSec": 210,
+          "free": true,
+          "stems": [
+            {
+              "instrument": "Batería",
+              "audio": "ph_drums.mp3"
+            },
+            {
+              "instrument": "Bajo",
+              "audio": "ph_bass.mp3"
+            },
+            {
+              "instrument": "Guitarra 1",
+              "audio": "ph_guitar.mp3"
+            },
+            {
+              "instrument": "Guitarra 2",
+              "audio": "ph_guitar2.mp3"
+            },
+            {
+              "instrument": "Piano",
+              "audio": "ph_piano.mp3"
+            }
+          ]
+        },
+        {
+          "id": "blues_02",
+          "title": "Blues 02",
+          "key": "D",
+          "bpm": 72,
+          "durationSec": 180,
+          "free": true,
+          "stems": [
+            {
+              "instrument": "Batería",
+              "audio": "ph_drums.mp3"
+            },
+            {
+              "instrument": "Bajo",
+              "audio": "ph_bass.mp3"
+            },
+            {
+              "instrument": "Guitarra 1",
+              "audio": "ph_guitar.mp3"
+            },
+            {
+              "instrument": "Guitarra 2",
+              "audio": "ph_guitar2.mp3"
+            },
+            {
+              "instrument": "Piano",
+              "audio": "ph_piano.mp3"
+            }
+          ]
+        },
+        {
+          "id": "blues_03",
+          "title": "Blues 03",
+          "key": "C",
+          "bpm": 102,
+          "durationSec": 300,
+          "free": false,
+          "stems": [
+            {
+              "instrument": "Batería",
+              "audio": "ph_drums.mp3"
+            },
+            {
+              "instrument": "Bajo",
+              "audio": "ph_bass.mp3"
+            },
+            {
+              "instrument": "Guitarra 1",
+              "audio": "ph_guitar.mp3"
+            }
+          ]
+        },
+        {
+          "id": "blues_04",
+          "title": "Blues 04",
+          "key": "G#",
+          "bpm": 98,
+          "durationSec": 300,
+          "free": false,
+          "stems": [
+            {
+              "instrument": "Batería",
+              "audio": "ph_drums.mp3"
+            },
+            {
+              "instrument": "Bajo",
+              "audio": "ph_bass.mp3"
+            },
+            {
+              "instrument": "Guitarra 1",
+              "audio": "ph_guitar.mp3"
+            },
+            {
+              "instrument": "Guitarra 2",
+              "audio": "ph_guitar2.mp3"
+            },
+            {
+              "instrument": "Piano",
+              "audio": "ph_piano.mp3"
+            }
+          ]
+        },
+        {
+          "id": "blues_05",
+          "title": "Blues 05",
+          "key": "A#",
+          "bpm": 114,
+          "durationSec": 270,
+          "free": false,
+          "stems": [
+            {
+              "instrument": "Batería",
+              "audio": "ph_drums.mp3"
+            },
+            {
+              "instrument": "Bajo",
+              "audio": "ph_bass.mp3"
+            },
+            {
+              "instrument": "Guitarra 1",
+              "audio": "ph_guitar.mp3"
+            }
+          ]
+        },
+        {
+          "id": "blues_06",
+          "title": "Blues 06",
+          "key": "D#",
+          "bpm": 118,
+          "durationSec": 240,
+          "free": false,
+          "stems": [
+            {
+              "instrument": "Batería",
+              "audio": "ph_drums.mp3"
+            },
+            {
+              "instrument": "Bajo",
+              "audio": "ph_bass.mp3"
+            },
+            {
+              "instrument": "Guitarra 1",
+              "audio": "ph_guitar.mp3"
+            },
+            {
+              "instrument": "Piano",
+              "audio": "ph_piano.mp3"
+            }
+          ]
+        },
+        {
+          "id": "blues_07",
+          "title": "Blues 07",
+          "key": "B",
+          "bpm": 76,
+          "durationSec": 240,
+          "free": false,
+          "stems": [
+            {
+              "instrument": "Batería",
+              "audio": "ph_drums.mp3"
+            },
+            {
+              "instrument": "Bajo",
+              "audio": "ph_bass.mp3"
+            },
+            {
+              "instrument": "Guitarra 2",
+              "audio": "ph_guitar2.mp3"
+            }
+          ]
+        },
+        {
+          "id": "blues_08",
+          "title": "Blues 08",
+          "key": "Am",
+          "bpm": 104,
+          "durationSec": 180,
+          "free": false,
+          "stems": [
+            {
+              "instrument": "Batería",
+              "audio": "ph_drums.mp3"
+            },
+            {
+              "instrument": "Bajo",
+              "audio": "ph_bass.mp3"
+            },
+            {
+              "instrument": "Guitarra 1",
+              "audio": "ph_guitar.mp3"
+            },
+            {
+              "instrument": "Guitarra 2",
+              "audio": "ph_guitar2.mp3"
+            },
+            {
+              "instrument": "Piano",
+              "audio": "ph_piano.mp3"
+            }
+          ]
+        },
+        {
+          "id": "blues_09",
+          "title": "Blues 09",
+          "key": "B",
+          "bpm": 88,
+          "durationSec": 300,
+          "free": false,
+          "stems": [
+            {
+              "instrument": "Batería",
+              "audio": "ph_drums.mp3"
+            },
+            {
+              "instrument": "Bajo",
+              "audio": "ph_bass.mp3"
+            },
+            {
+              "instrument": "Piano",
+              "audio": "ph_piano.mp3"
+            }
+          ]
+        },
+        {
+          "id": "blues_10",
+          "title": "Blues 10",
+          "key": "A",
+          "bpm": 112,
+          "durationSec": 210,
+          "free": false,
+          "stems": [
+            {
+              "instrument": "Batería",
+              "audio": "ph_drums.mp3"
+            },
+            {
+              "instrument": "Bajo",
+              "audio": "ph_bass.mp3"
+            },
+            {
+              "instrument": "Guitarra 1",
+              "audio": "ph_guitar.mp3"
+            },
+            {
+              "instrument": "Guitarra 2",
+              "audio": "ph_guitar2.mp3"
+            },
+            {
+              "instrument": "Piano",
+              "audio": "ph_piano.mp3"
+            }
+          ]
+        }
+      ]
     },
     {
-     "id": "blues_02",
-     "title": "Slow Blues",
-     "key": "D#",
-     "bpm": 101,
-     "durationSec": 174,
-     "audio": "placeholder.mp3",
-     "free": true
+      "id": "rock",
+      "name": "Rock",
+      "tracks": [
+        {
+          "id": "rock_01",
+          "title": "Rock 01",
+          "key": "Am",
+          "bpm": 155,
+          "durationSec": 180,
+          "free": true,
+          "stems": [
+            {
+              "instrument": "Batería",
+              "audio": "ph_drums.mp3"
+            },
+            {
+              "instrument": "Bajo",
+              "audio": "ph_bass.mp3"
+            },
+            {
+              "instrument": "Guitarra 1",
+              "audio": "ph_guitar.mp3"
+            }
+          ]
+        },
+        {
+          "id": "rock_02",
+          "title": "Rock 02",
+          "key": "B",
+          "bpm": 110,
+          "durationSec": 240,
+          "free": true,
+          "stems": [
+            {
+              "instrument": "Batería",
+              "audio": "ph_drums.mp3"
+            },
+            {
+              "instrument": "Bajo",
+              "audio": "ph_bass.mp3"
+            },
+            {
+              "instrument": "Guitarra 2",
+              "audio": "ph_guitar2.mp3"
+            },
+            {
+              "instrument": "Piano",
+              "audio": "ph_piano.mp3"
+            }
+          ]
+        },
+        {
+          "id": "rock_03",
+          "title": "Rock 03",
+          "key": "F",
+          "bpm": 117,
+          "durationSec": 180,
+          "free": false,
+          "stems": [
+            {
+              "instrument": "Batería",
+              "audio": "ph_drums.mp3"
+            },
+            {
+              "instrument": "Bajo",
+              "audio": "ph_bass.mp3"
+            },
+            {
+              "instrument": "Piano",
+              "audio": "ph_piano.mp3"
+            }
+          ]
+        },
+        {
+          "id": "rock_04",
+          "title": "Rock 04",
+          "key": "G#",
+          "bpm": 129,
+          "durationSec": 270,
+          "free": false,
+          "stems": [
+            {
+              "instrument": "Batería",
+              "audio": "ph_drums.mp3"
+            },
+            {
+              "instrument": "Bajo",
+              "audio": "ph_bass.mp3"
+            },
+            {
+              "instrument": "Guitarra 1",
+              "audio": "ph_guitar.mp3"
+            },
+            {
+              "instrument": "Guitarra 2",
+              "audio": "ph_guitar2.mp3"
+            },
+            {
+              "instrument": "Piano",
+              "audio": "ph_piano.mp3"
+            }
+          ]
+        },
+        {
+          "id": "rock_05",
+          "title": "Rock 05",
+          "key": "G",
+          "bpm": 153,
+          "durationSec": 180,
+          "free": false,
+          "stems": [
+            {
+              "instrument": "Batería",
+              "audio": "ph_drums.mp3"
+            },
+            {
+              "instrument": "Bajo",
+              "audio": "ph_bass.mp3"
+            },
+            {
+              "instrument": "Guitarra 1",
+              "audio": "ph_guitar.mp3"
+            },
+            {
+              "instrument": "Guitarra 2",
+              "audio": "ph_guitar2.mp3"
+            },
+            {
+              "instrument": "Piano",
+              "audio": "ph_piano.mp3"
+            }
+          ]
+        },
+        {
+          "id": "rock_06",
+          "title": "Rock 06",
+          "key": "D",
+          "bpm": 125,
+          "durationSec": 240,
+          "free": false,
+          "stems": [
+            {
+              "instrument": "Batería",
+              "audio": "ph_drums.mp3"
+            },
+            {
+              "instrument": "Bajo",
+              "audio": "ph_bass.mp3"
+            },
+            {
+              "instrument": "Guitarra 2",
+              "audio": "ph_guitar2.mp3"
+            }
+          ]
+        },
+        {
+          "id": "rock_07",
+          "title": "Rock 07",
+          "key": "F#",
+          "bpm": 156,
+          "durationSec": 240,
+          "free": false,
+          "stems": [
+            {
+              "instrument": "Batería",
+              "audio": "ph_drums.mp3"
+            },
+            {
+              "instrument": "Bajo",
+              "audio": "ph_bass.mp3"
+            },
+            {
+              "instrument": "Piano",
+              "audio": "ph_piano.mp3"
+            }
+          ]
+        },
+        {
+          "id": "rock_08",
+          "title": "Rock 08",
+          "key": "E",
+          "bpm": 109,
+          "durationSec": 240,
+          "free": false,
+          "stems": [
+            {
+              "instrument": "Batería",
+              "audio": "ph_drums.mp3"
+            },
+            {
+              "instrument": "Bajo",
+              "audio": "ph_bass.mp3"
+            },
+            {
+              "instrument": "Guitarra 1",
+              "audio": "ph_guitar.mp3"
+            },
+            {
+              "instrument": "Guitarra 2",
+              "audio": "ph_guitar2.mp3"
+            },
+            {
+              "instrument": "Piano",
+              "audio": "ph_piano.mp3"
+            }
+          ]
+        },
+        {
+          "id": "rock_09",
+          "title": "Rock 09",
+          "key": "G#",
+          "bpm": 135,
+          "durationSec": 300,
+          "free": false,
+          "stems": [
+            {
+              "instrument": "Batería",
+              "audio": "ph_drums.mp3"
+            },
+            {
+              "instrument": "Bajo",
+              "audio": "ph_bass.mp3"
+            },
+            {
+              "instrument": "Piano",
+              "audio": "ph_piano.mp3"
+            }
+          ]
+        },
+        {
+          "id": "rock_10",
+          "title": "Rock 10",
+          "key": "E",
+          "bpm": 123,
+          "durationSec": 210,
+          "free": false,
+          "stems": [
+            {
+              "instrument": "Batería",
+              "audio": "ph_drums.mp3"
+            },
+            {
+              "instrument": "Bajo",
+              "audio": "ph_bass.mp3"
+            },
+            {
+              "instrument": "Guitarra 1",
+              "audio": "ph_guitar.mp3"
+            },
+            {
+              "instrument": "Guitarra 2",
+              "audio": "ph_guitar2.mp3"
+            },
+            {
+              "instrument": "Piano",
+              "audio": "ph_piano.mp3"
+            }
+          ]
+        }
+      ]
     },
     {
-     "id": "blues_03",
-     "title": "Shuffle Blues",
-     "key": "A#",
-     "bpm": 112,
-     "durationSec": 198,
-     "audio": "placeholder.mp3",
-     "free": false
+      "id": "funk",
+      "name": "Funk",
+      "tracks": [
+        {
+          "id": "funk_01",
+          "title": "Funk 01",
+          "key": "F",
+          "bpm": 98,
+          "durationSec": 210,
+          "free": true,
+          "stems": [
+            {
+              "instrument": "Batería",
+              "audio": "ph_drums.mp3"
+            },
+            {
+              "instrument": "Bajo",
+              "audio": "ph_bass.mp3"
+            },
+            {
+              "instrument": "Guitarra 1",
+              "audio": "ph_guitar.mp3"
+            },
+            {
+              "instrument": "Guitarra 2",
+              "audio": "ph_guitar2.mp3"
+            },
+            {
+              "instrument": "Piano",
+              "audio": "ph_piano.mp3"
+            }
+          ]
+        },
+        {
+          "id": "funk_02",
+          "title": "Funk 02",
+          "key": "Dm",
+          "bpm": 107,
+          "durationSec": 300,
+          "free": true,
+          "stems": [
+            {
+              "instrument": "Batería",
+              "audio": "ph_drums.mp3"
+            },
+            {
+              "instrument": "Bajo",
+              "audio": "ph_bass.mp3"
+            },
+            {
+              "instrument": "Guitarra 1",
+              "audio": "ph_guitar.mp3"
+            },
+            {
+              "instrument": "Guitarra 2",
+              "audio": "ph_guitar2.mp3"
+            },
+            {
+              "instrument": "Piano",
+              "audio": "ph_piano.mp3"
+            }
+          ]
+        },
+        {
+          "id": "funk_03",
+          "title": "Funk 03",
+          "key": "G#",
+          "bpm": 116,
+          "durationSec": 300,
+          "free": false,
+          "stems": [
+            {
+              "instrument": "Batería",
+              "audio": "ph_drums.mp3"
+            },
+            {
+              "instrument": "Bajo",
+              "audio": "ph_bass.mp3"
+            },
+            {
+              "instrument": "Guitarra 1",
+              "audio": "ph_guitar.mp3"
+            },
+            {
+              "instrument": "Guitarra 2",
+              "audio": "ph_guitar2.mp3"
+            },
+            {
+              "instrument": "Piano",
+              "audio": "ph_piano.mp3"
+            }
+          ]
+        },
+        {
+          "id": "funk_04",
+          "title": "Funk 04",
+          "key": "Dm",
+          "bpm": 108,
+          "durationSec": 210,
+          "free": false,
+          "stems": [
+            {
+              "instrument": "Batería",
+              "audio": "ph_drums.mp3"
+            },
+            {
+              "instrument": "Bajo",
+              "audio": "ph_bass.mp3"
+            },
+            {
+              "instrument": "Guitarra 1",
+              "audio": "ph_guitar.mp3"
+            },
+            {
+              "instrument": "Guitarra 2",
+              "audio": "ph_guitar2.mp3"
+            },
+            {
+              "instrument": "Piano",
+              "audio": "ph_piano.mp3"
+            }
+          ]
+        },
+        {
+          "id": "funk_05",
+          "title": "Funk 05",
+          "key": "Cm",
+          "bpm": 118,
+          "durationSec": 240,
+          "free": false,
+          "stems": [
+            {
+              "instrument": "Batería",
+              "audio": "ph_drums.mp3"
+            },
+            {
+              "instrument": "Bajo",
+              "audio": "ph_bass.mp3"
+            },
+            {
+              "instrument": "Piano",
+              "audio": "ph_piano.mp3"
+            }
+          ]
+        },
+        {
+          "id": "funk_06",
+          "title": "Funk 06",
+          "key": "Cm",
+          "bpm": 98,
+          "durationSec": 240,
+          "free": false,
+          "stems": [
+            {
+              "instrument": "Batería",
+              "audio": "ph_drums.mp3"
+            },
+            {
+              "instrument": "Bajo",
+              "audio": "ph_bass.mp3"
+            },
+            {
+              "instrument": "Piano",
+              "audio": "ph_piano.mp3"
+            }
+          ]
+        },
+        {
+          "id": "funk_07",
+          "title": "Funk 07",
+          "key": "Bm",
+          "bpm": 119,
+          "durationSec": 210,
+          "free": false,
+          "stems": [
+            {
+              "instrument": "Batería",
+              "audio": "ph_drums.mp3"
+            },
+            {
+              "instrument": "Bajo",
+              "audio": "ph_bass.mp3"
+            },
+            {
+              "instrument": "Guitarra 1",
+              "audio": "ph_guitar.mp3"
+            },
+            {
+              "instrument": "Guitarra 2",
+              "audio": "ph_guitar2.mp3"
+            },
+            {
+              "instrument": "Piano",
+              "audio": "ph_piano.mp3"
+            }
+          ]
+        },
+        {
+          "id": "funk_08",
+          "title": "Funk 08",
+          "key": "B",
+          "bpm": 95,
+          "durationSec": 180,
+          "free": false,
+          "stems": [
+            {
+              "instrument": "Batería",
+              "audio": "ph_drums.mp3"
+            },
+            {
+              "instrument": "Bajo",
+              "audio": "ph_bass.mp3"
+            },
+            {
+              "instrument": "Guitarra 1",
+              "audio": "ph_guitar.mp3"
+            },
+            {
+              "instrument": "Guitarra 2",
+              "audio": "ph_guitar2.mp3"
+            },
+            {
+              "instrument": "Piano",
+              "audio": "ph_piano.mp3"
+            }
+          ]
+        },
+        {
+          "id": "funk_09",
+          "title": "Funk 09",
+          "key": "D",
+          "bpm": 102,
+          "durationSec": 300,
+          "free": false,
+          "stems": [
+            {
+              "instrument": "Batería",
+              "audio": "ph_drums.mp3"
+            },
+            {
+              "instrument": "Bajo",
+              "audio": "ph_bass.mp3"
+            },
+            {
+              "instrument": "Guitarra 1",
+              "audio": "ph_guitar.mp3"
+            },
+            {
+              "instrument": "Piano",
+              "audio": "ph_piano.mp3"
+            }
+          ]
+        },
+        {
+          "id": "funk_10",
+          "title": "Funk 10",
+          "key": "Bm",
+          "bpm": 110,
+          "durationSec": 180,
+          "free": false,
+          "stems": [
+            {
+              "instrument": "Batería",
+              "audio": "ph_drums.mp3"
+            },
+            {
+              "instrument": "Bajo",
+              "audio": "ph_bass.mp3"
+            },
+            {
+              "instrument": "Piano",
+              "audio": "ph_piano.mp3"
+            }
+          ]
+        }
+      ]
     },
     {
-     "id": "blues_04",
-     "title": "Texas Blues",
-     "key": "D",
-     "bpm": 97,
-     "durationSec": 179,
-     "audio": "placeholder.mp3",
-     "free": false
+      "id": "jazz",
+      "name": "Jazz",
+      "tracks": [
+        {
+          "id": "jazz_01",
+          "title": "Jazz 01",
+          "key": "Bm",
+          "bpm": 194,
+          "durationSec": 270,
+          "free": true,
+          "stems": [
+            {
+              "instrument": "Batería",
+              "audio": "ph_drums.mp3"
+            },
+            {
+              "instrument": "Bajo",
+              "audio": "ph_bass.mp3"
+            },
+            {
+              "instrument": "Guitarra 1",
+              "audio": "ph_guitar.mp3"
+            }
+          ]
+        },
+        {
+          "id": "jazz_02",
+          "title": "Jazz 02",
+          "key": "Em",
+          "bpm": 177,
+          "durationSec": 300,
+          "free": true,
+          "stems": [
+            {
+              "instrument": "Batería",
+              "audio": "ph_drums.mp3"
+            },
+            {
+              "instrument": "Bajo",
+              "audio": "ph_bass.mp3"
+            },
+            {
+              "instrument": "Guitarra 2",
+              "audio": "ph_guitar2.mp3"
+            }
+          ]
+        },
+        {
+          "id": "jazz_03",
+          "title": "Jazz 03",
+          "key": "A",
+          "bpm": 198,
+          "durationSec": 210,
+          "free": false,
+          "stems": [
+            {
+              "instrument": "Batería",
+              "audio": "ph_drums.mp3"
+            },
+            {
+              "instrument": "Bajo",
+              "audio": "ph_bass.mp3"
+            },
+            {
+              "instrument": "Piano",
+              "audio": "ph_piano.mp3"
+            }
+          ]
+        },
+        {
+          "id": "jazz_04",
+          "title": "Jazz 04",
+          "key": "Dm",
+          "bpm": 166,
+          "durationSec": 300,
+          "free": false,
+          "stems": [
+            {
+              "instrument": "Batería",
+              "audio": "ph_drums.mp3"
+            },
+            {
+              "instrument": "Bajo",
+              "audio": "ph_bass.mp3"
+            },
+            {
+              "instrument": "Guitarra 2",
+              "audio": "ph_guitar2.mp3"
+            },
+            {
+              "instrument": "Piano",
+              "audio": "ph_piano.mp3"
+            }
+          ]
+        },
+        {
+          "id": "jazz_05",
+          "title": "Jazz 05",
+          "key": "A#",
+          "bpm": 138,
+          "durationSec": 180,
+          "free": false,
+          "stems": [
+            {
+              "instrument": "Batería",
+              "audio": "ph_drums.mp3"
+            },
+            {
+              "instrument": "Bajo",
+              "audio": "ph_bass.mp3"
+            },
+            {
+              "instrument": "Guitarra 1",
+              "audio": "ph_guitar.mp3"
+            }
+          ]
+        },
+        {
+          "id": "jazz_06",
+          "title": "Jazz 06",
+          "key": "G",
+          "bpm": 180,
+          "durationSec": 210,
+          "free": false,
+          "stems": [
+            {
+              "instrument": "Batería",
+              "audio": "ph_drums.mp3"
+            },
+            {
+              "instrument": "Bajo",
+              "audio": "ph_bass.mp3"
+            },
+            {
+              "instrument": "Piano",
+              "audio": "ph_piano.mp3"
+            }
+          ]
+        },
+        {
+          "id": "jazz_07",
+          "title": "Jazz 07",
+          "key": "G",
+          "bpm": 200,
+          "durationSec": 180,
+          "free": false,
+          "stems": [
+            {
+              "instrument": "Batería",
+              "audio": "ph_drums.mp3"
+            },
+            {
+              "instrument": "Bajo",
+              "audio": "ph_bass.mp3"
+            },
+            {
+              "instrument": "Guitarra 1",
+              "audio": "ph_guitar.mp3"
+            }
+          ]
+        },
+        {
+          "id": "jazz_08",
+          "title": "Jazz 08",
+          "key": "Cm",
+          "bpm": 152,
+          "durationSec": 180,
+          "free": false,
+          "stems": [
+            {
+              "instrument": "Batería",
+              "audio": "ph_drums.mp3"
+            },
+            {
+              "instrument": "Bajo",
+              "audio": "ph_bass.mp3"
+            },
+            {
+              "instrument": "Guitarra 1",
+              "audio": "ph_guitar.mp3"
+            }
+          ]
+        },
+        {
+          "id": "jazz_09",
+          "title": "Jazz 09",
+          "key": "F#",
+          "bpm": 195,
+          "durationSec": 270,
+          "free": false,
+          "stems": [
+            {
+              "instrument": "Batería",
+              "audio": "ph_drums.mp3"
+            },
+            {
+              "instrument": "Bajo",
+              "audio": "ph_bass.mp3"
+            },
+            {
+              "instrument": "Guitarra 2",
+              "audio": "ph_guitar2.mp3"
+            }
+          ]
+        },
+        {
+          "id": "jazz_10",
+          "title": "Jazz 10",
+          "key": "F#",
+          "bpm": 170,
+          "durationSec": 270,
+          "free": false,
+          "stems": [
+            {
+              "instrument": "Batería",
+              "audio": "ph_drums.mp3"
+            },
+            {
+              "instrument": "Bajo",
+              "audio": "ph_bass.mp3"
+            },
+            {
+              "instrument": "Guitarra 1",
+              "audio": "ph_guitar.mp3"
+            },
+            {
+              "instrument": "Guitarra 2",
+              "audio": "ph_guitar2.mp3"
+            },
+            {
+              "instrument": "Piano",
+              "audio": "ph_piano.mp3"
+            }
+          ]
+        }
+      ]
     },
     {
-     "id": "blues_05",
-     "title": "Chicago Blues",
-     "key": "F",
-     "bpm": 73,
-     "durationSec": 169,
-     "audio": "placeholder.mp3",
-     "free": false
+      "id": "pop",
+      "name": "Pop",
+      "tracks": [
+        {
+          "id": "pop_01",
+          "title": "Pop 01",
+          "key": "Em",
+          "bpm": 117,
+          "durationSec": 240,
+          "free": true,
+          "stems": [
+            {
+              "instrument": "Batería",
+              "audio": "ph_drums.mp3"
+            },
+            {
+              "instrument": "Bajo",
+              "audio": "ph_bass.mp3"
+            },
+            {
+              "instrument": "Guitarra 1",
+              "audio": "ph_guitar.mp3"
+            }
+          ]
+        },
+        {
+          "id": "pop_02",
+          "title": "Pop 02",
+          "key": "Am",
+          "bpm": 96,
+          "durationSec": 180,
+          "free": true,
+          "stems": [
+            {
+              "instrument": "Batería",
+              "audio": "ph_drums.mp3"
+            },
+            {
+              "instrument": "Bajo",
+              "audio": "ph_bass.mp3"
+            },
+            {
+              "instrument": "Guitarra 1",
+              "audio": "ph_guitar.mp3"
+            },
+            {
+              "instrument": "Guitarra 2",
+              "audio": "ph_guitar2.mp3"
+            }
+          ]
+        },
+        {
+          "id": "pop_03",
+          "title": "Pop 03",
+          "key": "Bm",
+          "bpm": 102,
+          "durationSec": 210,
+          "free": false,
+          "stems": [
+            {
+              "instrument": "Batería",
+              "audio": "ph_drums.mp3"
+            },
+            {
+              "instrument": "Bajo",
+              "audio": "ph_bass.mp3"
+            },
+            {
+              "instrument": "Guitarra 1",
+              "audio": "ph_guitar.mp3"
+            },
+            {
+              "instrument": "Guitarra 2",
+              "audio": "ph_guitar2.mp3"
+            },
+            {
+              "instrument": "Piano",
+              "audio": "ph_piano.mp3"
+            }
+          ]
+        },
+        {
+          "id": "pop_04",
+          "title": "Pop 04",
+          "key": "Dm",
+          "bpm": 101,
+          "durationSec": 240,
+          "free": false,
+          "stems": [
+            {
+              "instrument": "Batería",
+              "audio": "ph_drums.mp3"
+            },
+            {
+              "instrument": "Bajo",
+              "audio": "ph_bass.mp3"
+            },
+            {
+              "instrument": "Guitarra 1",
+              "audio": "ph_guitar.mp3"
+            },
+            {
+              "instrument": "Guitarra 2",
+              "audio": "ph_guitar2.mp3"
+            }
+          ]
+        },
+        {
+          "id": "pop_05",
+          "title": "Pop 05",
+          "key": "D#",
+          "bpm": 118,
+          "durationSec": 300,
+          "free": false,
+          "stems": [
+            {
+              "instrument": "Batería",
+              "audio": "ph_drums.mp3"
+            },
+            {
+              "instrument": "Bajo",
+              "audio": "ph_bass.mp3"
+            },
+            {
+              "instrument": "Guitarra 1",
+              "audio": "ph_guitar.mp3"
+            }
+          ]
+        },
+        {
+          "id": "pop_06",
+          "title": "Pop 06",
+          "key": "D",
+          "bpm": 124,
+          "durationSec": 180,
+          "free": false,
+          "stems": [
+            {
+              "instrument": "Batería",
+              "audio": "ph_drums.mp3"
+            },
+            {
+              "instrument": "Bajo",
+              "audio": "ph_bass.mp3"
+            },
+            {
+              "instrument": "Piano",
+              "audio": "ph_piano.mp3"
+            }
+          ]
+        },
+        {
+          "id": "pop_07",
+          "title": "Pop 07",
+          "key": "Gm",
+          "bpm": 116,
+          "durationSec": 270,
+          "free": false,
+          "stems": [
+            {
+              "instrument": "Batería",
+              "audio": "ph_drums.mp3"
+            },
+            {
+              "instrument": "Bajo",
+              "audio": "ph_bass.mp3"
+            },
+            {
+              "instrument": "Guitarra 1",
+              "audio": "ph_guitar.mp3"
+            }
+          ]
+        },
+        {
+          "id": "pop_08",
+          "title": "Pop 08",
+          "key": "Am",
+          "bpm": 93,
+          "durationSec": 210,
+          "free": false,
+          "stems": [
+            {
+              "instrument": "Batería",
+              "audio": "ph_drums.mp3"
+            },
+            {
+              "instrument": "Bajo",
+              "audio": "ph_bass.mp3"
+            },
+            {
+              "instrument": "Guitarra 2",
+              "audio": "ph_guitar2.mp3"
+            }
+          ]
+        },
+        {
+          "id": "pop_09",
+          "title": "Pop 09",
+          "key": "A",
+          "bpm": 106,
+          "durationSec": 270,
+          "free": false,
+          "stems": [
+            {
+              "instrument": "Batería",
+              "audio": "ph_drums.mp3"
+            },
+            {
+              "instrument": "Bajo",
+              "audio": "ph_bass.mp3"
+            },
+            {
+              "instrument": "Guitarra 2",
+              "audio": "ph_guitar2.mp3"
+            }
+          ]
+        },
+        {
+          "id": "pop_10",
+          "title": "Pop 10",
+          "key": "A",
+          "bpm": 99,
+          "durationSec": 210,
+          "free": false,
+          "stems": [
+            {
+              "instrument": "Batería",
+              "audio": "ph_drums.mp3"
+            },
+            {
+              "instrument": "Bajo",
+              "audio": "ph_bass.mp3"
+            },
+            {
+              "instrument": "Guitarra 2",
+              "audio": "ph_guitar2.mp3"
+            },
+            {
+              "instrument": "Piano",
+              "audio": "ph_piano.mp3"
+            }
+          ]
+        }
+      ]
     },
     {
-     "id": "blues_06",
-     "title": "Minor Blues",
-     "key": "A#",
-     "bpm": 87,
-     "durationSec": 364,
-     "audio": "placeholder.mp3",
-     "free": false
+      "id": "soul",
+      "name": "Soul",
+      "tracks": [
+        {
+          "id": "soul_01",
+          "title": "Soul 01",
+          "key": "C#",
+          "bpm": 107,
+          "durationSec": 300,
+          "free": true,
+          "stems": [
+            {
+              "instrument": "Batería",
+              "audio": "ph_drums.mp3"
+            },
+            {
+              "instrument": "Bajo",
+              "audio": "ph_bass.mp3"
+            },
+            {
+              "instrument": "Guitarra 1",
+              "audio": "ph_guitar.mp3"
+            }
+          ]
+        },
+        {
+          "id": "soul_02",
+          "title": "Soul 02",
+          "key": "Cm",
+          "bpm": 107,
+          "durationSec": 270,
+          "free": true,
+          "stems": [
+            {
+              "instrument": "Batería",
+              "audio": "ph_drums.mp3"
+            },
+            {
+              "instrument": "Bajo",
+              "audio": "ph_bass.mp3"
+            },
+            {
+              "instrument": "Guitarra 1",
+              "audio": "ph_guitar.mp3"
+            },
+            {
+              "instrument": "Guitarra 2",
+              "audio": "ph_guitar2.mp3"
+            },
+            {
+              "instrument": "Piano",
+              "audio": "ph_piano.mp3"
+            }
+          ]
+        },
+        {
+          "id": "soul_03",
+          "title": "Soul 03",
+          "key": "D",
+          "bpm": 81,
+          "durationSec": 180,
+          "free": false,
+          "stems": [
+            {
+              "instrument": "Batería",
+              "audio": "ph_drums.mp3"
+            },
+            {
+              "instrument": "Bajo",
+              "audio": "ph_bass.mp3"
+            },
+            {
+              "instrument": "Guitarra 1",
+              "audio": "ph_guitar.mp3"
+            },
+            {
+              "instrument": "Guitarra 2",
+              "audio": "ph_guitar2.mp3"
+            },
+            {
+              "instrument": "Piano",
+              "audio": "ph_piano.mp3"
+            }
+          ]
+        },
+        {
+          "id": "soul_04",
+          "title": "Soul 04",
+          "key": "C#",
+          "bpm": 106,
+          "durationSec": 210,
+          "free": false,
+          "stems": [
+            {
+              "instrument": "Batería",
+              "audio": "ph_drums.mp3"
+            },
+            {
+              "instrument": "Bajo",
+              "audio": "ph_bass.mp3"
+            },
+            {
+              "instrument": "Guitarra 1",
+              "audio": "ph_guitar.mp3"
+            },
+            {
+              "instrument": "Guitarra 2",
+              "audio": "ph_guitar2.mp3"
+            },
+            {
+              "instrument": "Piano",
+              "audio": "ph_piano.mp3"
+            }
+          ]
+        },
+        {
+          "id": "soul_05",
+          "title": "Soul 05",
+          "key": "A#",
+          "bpm": 86,
+          "durationSec": 210,
+          "free": false,
+          "stems": [
+            {
+              "instrument": "Batería",
+              "audio": "ph_drums.mp3"
+            },
+            {
+              "instrument": "Bajo",
+              "audio": "ph_bass.mp3"
+            },
+            {
+              "instrument": "Guitarra 1",
+              "audio": "ph_guitar.mp3"
+            },
+            {
+              "instrument": "Guitarra 2",
+              "audio": "ph_guitar2.mp3"
+            },
+            {
+              "instrument": "Piano",
+              "audio": "ph_piano.mp3"
+            }
+          ]
+        },
+        {
+          "id": "soul_06",
+          "title": "Soul 06",
+          "key": "A",
+          "bpm": 95,
+          "durationSec": 210,
+          "free": false,
+          "stems": [
+            {
+              "instrument": "Batería",
+              "audio": "ph_drums.mp3"
+            },
+            {
+              "instrument": "Bajo",
+              "audio": "ph_bass.mp3"
+            },
+            {
+              "instrument": "Guitarra 2",
+              "audio": "ph_guitar2.mp3"
+            }
+          ]
+        },
+        {
+          "id": "soul_07",
+          "title": "Soul 07",
+          "key": "D#",
+          "bpm": 70,
+          "durationSec": 270,
+          "free": false,
+          "stems": [
+            {
+              "instrument": "Batería",
+              "audio": "ph_drums.mp3"
+            },
+            {
+              "instrument": "Bajo",
+              "audio": "ph_bass.mp3"
+            },
+            {
+              "instrument": "Guitarra 1",
+              "audio": "ph_guitar.mp3"
+            },
+            {
+              "instrument": "Guitarra 2",
+              "audio": "ph_guitar2.mp3"
+            }
+          ]
+        },
+        {
+          "id": "soul_08",
+          "title": "Soul 08",
+          "key": "G#",
+          "bpm": 83,
+          "durationSec": 300,
+          "free": false,
+          "stems": [
+            {
+              "instrument": "Batería",
+              "audio": "ph_drums.mp3"
+            },
+            {
+              "instrument": "Bajo",
+              "audio": "ph_bass.mp3"
+            },
+            {
+              "instrument": "Piano",
+              "audio": "ph_piano.mp3"
+            }
+          ]
+        },
+        {
+          "id": "soul_09",
+          "title": "Soul 09",
+          "key": "B",
+          "bpm": 74,
+          "durationSec": 210,
+          "free": false,
+          "stems": [
+            {
+              "instrument": "Batería",
+              "audio": "ph_drums.mp3"
+            },
+            {
+              "instrument": "Bajo",
+              "audio": "ph_bass.mp3"
+            },
+            {
+              "instrument": "Guitarra 2",
+              "audio": "ph_guitar2.mp3"
+            }
+          ]
+        },
+        {
+          "id": "soul_10",
+          "title": "Soul 10",
+          "key": "Cm",
+          "bpm": 104,
+          "durationSec": 240,
+          "free": false,
+          "stems": [
+            {
+              "instrument": "Batería",
+              "audio": "ph_drums.mp3"
+            },
+            {
+              "instrument": "Bajo",
+              "audio": "ph_bass.mp3"
+            },
+            {
+              "instrument": "Guitarra 1",
+              "audio": "ph_guitar.mp3"
+            },
+            {
+              "instrument": "Guitarra 2",
+              "audio": "ph_guitar2.mp3"
+            }
+          ]
+        }
+      ]
     },
     {
-     "id": "blues_07",
-     "title": "Jump Blues",
-     "key": "A#",
-     "bpm": 75,
-     "durationSec": 196,
-     "audio": "placeholder.mp3",
-     "free": false
+      "id": "country",
+      "name": "Country",
+      "tracks": [
+        {
+          "id": "country_01",
+          "title": "Country 01",
+          "key": "D#",
+          "bpm": 125,
+          "durationSec": 240,
+          "free": true,
+          "stems": [
+            {
+              "instrument": "Batería",
+              "audio": "ph_drums.mp3"
+            },
+            {
+              "instrument": "Bajo",
+              "audio": "ph_bass.mp3"
+            },
+            {
+              "instrument": "Piano",
+              "audio": "ph_piano.mp3"
+            }
+          ]
+        },
+        {
+          "id": "country_02",
+          "title": "Country 02",
+          "key": "Bm",
+          "bpm": 97,
+          "durationSec": 180,
+          "free": true,
+          "stems": [
+            {
+              "instrument": "Batería",
+              "audio": "ph_drums.mp3"
+            },
+            {
+              "instrument": "Bajo",
+              "audio": "ph_bass.mp3"
+            },
+            {
+              "instrument": "Guitarra 2",
+              "audio": "ph_guitar2.mp3"
+            }
+          ]
+        },
+        {
+          "id": "country_03",
+          "title": "Country 03",
+          "key": "F#",
+          "bpm": 108,
+          "durationSec": 300,
+          "free": false,
+          "stems": [
+            {
+              "instrument": "Batería",
+              "audio": "ph_drums.mp3"
+            },
+            {
+              "instrument": "Bajo",
+              "audio": "ph_bass.mp3"
+            },
+            {
+              "instrument": "Guitarra 2",
+              "audio": "ph_guitar2.mp3"
+            }
+          ]
+        },
+        {
+          "id": "country_04",
+          "title": "Country 04",
+          "key": "G#",
+          "bpm": 122,
+          "durationSec": 270,
+          "free": false,
+          "stems": [
+            {
+              "instrument": "Batería",
+              "audio": "ph_drums.mp3"
+            },
+            {
+              "instrument": "Bajo",
+              "audio": "ph_bass.mp3"
+            },
+            {
+              "instrument": "Guitarra 1",
+              "audio": "ph_guitar.mp3"
+            },
+            {
+              "instrument": "Guitarra 2",
+              "audio": "ph_guitar2.mp3"
+            },
+            {
+              "instrument": "Piano",
+              "audio": "ph_piano.mp3"
+            }
+          ]
+        },
+        {
+          "id": "country_05",
+          "title": "Country 05",
+          "key": "G#",
+          "bpm": 130,
+          "durationSec": 270,
+          "free": false,
+          "stems": [
+            {
+              "instrument": "Batería",
+              "audio": "ph_drums.mp3"
+            },
+            {
+              "instrument": "Bajo",
+              "audio": "ph_bass.mp3"
+            },
+            {
+              "instrument": "Guitarra 1",
+              "audio": "ph_guitar.mp3"
+            }
+          ]
+        },
+        {
+          "id": "country_06",
+          "title": "Country 06",
+          "key": "G#",
+          "bpm": 111,
+          "durationSec": 210,
+          "free": false,
+          "stems": [
+            {
+              "instrument": "Batería",
+              "audio": "ph_drums.mp3"
+            },
+            {
+              "instrument": "Bajo",
+              "audio": "ph_bass.mp3"
+            },
+            {
+              "instrument": "Guitarra 1",
+              "audio": "ph_guitar.mp3"
+            }
+          ]
+        },
+        {
+          "id": "country_07",
+          "title": "Country 07",
+          "key": "Em",
+          "bpm": 118,
+          "durationSec": 300,
+          "free": false,
+          "stems": [
+            {
+              "instrument": "Batería",
+              "audio": "ph_drums.mp3"
+            },
+            {
+              "instrument": "Bajo",
+              "audio": "ph_bass.mp3"
+            },
+            {
+              "instrument": "Piano",
+              "audio": "ph_piano.mp3"
+            }
+          ]
+        },
+        {
+          "id": "country_08",
+          "title": "Country 08",
+          "key": "Bm",
+          "bpm": 134,
+          "durationSec": 210,
+          "free": false,
+          "stems": [
+            {
+              "instrument": "Batería",
+              "audio": "ph_drums.mp3"
+            },
+            {
+              "instrument": "Bajo",
+              "audio": "ph_bass.mp3"
+            },
+            {
+              "instrument": "Guitarra 1",
+              "audio": "ph_guitar.mp3"
+            },
+            {
+              "instrument": "Guitarra 2",
+              "audio": "ph_guitar2.mp3"
+            },
+            {
+              "instrument": "Piano",
+              "audio": "ph_piano.mp3"
+            }
+          ]
+        },
+        {
+          "id": "country_09",
+          "title": "Country 09",
+          "key": "E",
+          "bpm": 127,
+          "durationSec": 300,
+          "free": false,
+          "stems": [
+            {
+              "instrument": "Batería",
+              "audio": "ph_drums.mp3"
+            },
+            {
+              "instrument": "Bajo",
+              "audio": "ph_bass.mp3"
+            },
+            {
+              "instrument": "Guitarra 2",
+              "audio": "ph_guitar2.mp3"
+            }
+          ]
+        },
+        {
+          "id": "country_10",
+          "title": "Country 10",
+          "key": "C#",
+          "bpm": 109,
+          "durationSec": 240,
+          "free": false,
+          "stems": [
+            {
+              "instrument": "Batería",
+              "audio": "ph_drums.mp3"
+            },
+            {
+              "instrument": "Bajo",
+              "audio": "ph_bass.mp3"
+            },
+            {
+              "instrument": "Guitarra 1",
+              "audio": "ph_guitar.mp3"
+            },
+            {
+              "instrument": "Piano",
+              "audio": "ph_piano.mp3"
+            }
+          ]
+        }
+      ]
     },
     {
-     "id": "blues_08",
-     "title": "Blues Rock",
-     "key": "F",
-     "bpm": 87,
-     "durationSec": 180,
-     "audio": "placeholder.mp3",
-     "free": false
+      "id": "reggae",
+      "name": "Reggae",
+      "tracks": [
+        {
+          "id": "reggae_01",
+          "title": "Reggae 01",
+          "key": "Bm",
+          "bpm": 66,
+          "durationSec": 240,
+          "free": true,
+          "stems": [
+            {
+              "instrument": "Batería",
+              "audio": "ph_drums.mp3"
+            },
+            {
+              "instrument": "Bajo",
+              "audio": "ph_bass.mp3"
+            },
+            {
+              "instrument": "Guitarra 1",
+              "audio": "ph_guitar.mp3"
+            },
+            {
+              "instrument": "Piano",
+              "audio": "ph_piano.mp3"
+            }
+          ]
+        },
+        {
+          "id": "reggae_02",
+          "title": "Reggae 02",
+          "key": "F",
+          "bpm": 75,
+          "durationSec": 210,
+          "free": true,
+          "stems": [
+            {
+              "instrument": "Batería",
+              "audio": "ph_drums.mp3"
+            },
+            {
+              "instrument": "Bajo",
+              "audio": "ph_bass.mp3"
+            },
+            {
+              "instrument": "Guitarra 1",
+              "audio": "ph_guitar.mp3"
+            },
+            {
+              "instrument": "Piano",
+              "audio": "ph_piano.mp3"
+            }
+          ]
+        },
+        {
+          "id": "reggae_03",
+          "title": "Reggae 03",
+          "key": "G",
+          "bpm": 81,
+          "durationSec": 270,
+          "free": false,
+          "stems": [
+            {
+              "instrument": "Batería",
+              "audio": "ph_drums.mp3"
+            },
+            {
+              "instrument": "Bajo",
+              "audio": "ph_bass.mp3"
+            },
+            {
+              "instrument": "Guitarra 1",
+              "audio": "ph_guitar.mp3"
+            },
+            {
+              "instrument": "Piano",
+              "audio": "ph_piano.mp3"
+            }
+          ]
+        },
+        {
+          "id": "reggae_04",
+          "title": "Reggae 04",
+          "key": "Gm",
+          "bpm": 84,
+          "durationSec": 180,
+          "free": false,
+          "stems": [
+            {
+              "instrument": "Batería",
+              "audio": "ph_drums.mp3"
+            },
+            {
+              "instrument": "Bajo",
+              "audio": "ph_bass.mp3"
+            },
+            {
+              "instrument": "Guitarra 1",
+              "audio": "ph_guitar.mp3"
+            },
+            {
+              "instrument": "Piano",
+              "audio": "ph_piano.mp3"
+            }
+          ]
+        },
+        {
+          "id": "reggae_05",
+          "title": "Reggae 05",
+          "key": "A",
+          "bpm": 89,
+          "durationSec": 240,
+          "free": false,
+          "stems": [
+            {
+              "instrument": "Batería",
+              "audio": "ph_drums.mp3"
+            },
+            {
+              "instrument": "Bajo",
+              "audio": "ph_bass.mp3"
+            },
+            {
+              "instrument": "Guitarra 1",
+              "audio": "ph_guitar.mp3"
+            }
+          ]
+        },
+        {
+          "id": "reggae_06",
+          "title": "Reggae 06",
+          "key": "Am",
+          "bpm": 61,
+          "durationSec": 210,
+          "free": false,
+          "stems": [
+            {
+              "instrument": "Batería",
+              "audio": "ph_drums.mp3"
+            },
+            {
+              "instrument": "Bajo",
+              "audio": "ph_bass.mp3"
+            },
+            {
+              "instrument": "Guitarra 1",
+              "audio": "ph_guitar.mp3"
+            }
+          ]
+        },
+        {
+          "id": "reggae_07",
+          "title": "Reggae 07",
+          "key": "Cm",
+          "bpm": 77,
+          "durationSec": 240,
+          "free": false,
+          "stems": [
+            {
+              "instrument": "Batería",
+              "audio": "ph_drums.mp3"
+            },
+            {
+              "instrument": "Bajo",
+              "audio": "ph_bass.mp3"
+            },
+            {
+              "instrument": "Guitarra 1",
+              "audio": "ph_guitar.mp3"
+            },
+            {
+              "instrument": "Guitarra 2",
+              "audio": "ph_guitar2.mp3"
+            }
+          ]
+        },
+        {
+          "id": "reggae_08",
+          "title": "Reggae 08",
+          "key": "G#",
+          "bpm": 61,
+          "durationSec": 180,
+          "free": false,
+          "stems": [
+            {
+              "instrument": "Batería",
+              "audio": "ph_drums.mp3"
+            },
+            {
+              "instrument": "Bajo",
+              "audio": "ph_bass.mp3"
+            },
+            {
+              "instrument": "Guitarra 2",
+              "audio": "ph_guitar2.mp3"
+            },
+            {
+              "instrument": "Piano",
+              "audio": "ph_piano.mp3"
+            }
+          ]
+        },
+        {
+          "id": "reggae_09",
+          "title": "Reggae 09",
+          "key": "D#",
+          "bpm": 76,
+          "durationSec": 180,
+          "free": false,
+          "stems": [
+            {
+              "instrument": "Batería",
+              "audio": "ph_drums.mp3"
+            },
+            {
+              "instrument": "Bajo",
+              "audio": "ph_bass.mp3"
+            },
+            {
+              "instrument": "Piano",
+              "audio": "ph_piano.mp3"
+            }
+          ]
+        },
+        {
+          "id": "reggae_10",
+          "title": "Reggae 10",
+          "key": "Cm",
+          "bpm": 87,
+          "durationSec": 300,
+          "free": false,
+          "stems": [
+            {
+              "instrument": "Batería",
+              "audio": "ph_drums.mp3"
+            },
+            {
+              "instrument": "Bajo",
+              "audio": "ph_bass.mp3"
+            },
+            {
+              "instrument": "Guitarra 1",
+              "audio": "ph_guitar.mp3"
+            },
+            {
+              "instrument": "Guitarra 2",
+              "audio": "ph_guitar2.mp3"
+            },
+            {
+              "instrument": "Piano",
+              "audio": "ph_piano.mp3"
+            }
+          ]
+        }
+      ]
     },
     {
-     "id": "blues_09",
-     "title": "Delta Groove",
-     "key": "F#",
-     "bpm": 67,
-     "durationSec": 264,
-     "audio": "placeholder.mp3",
-     "free": false
+      "id": "metal",
+      "name": "Metal",
+      "tracks": [
+        {
+          "id": "metal_01",
+          "title": "Metal 01",
+          "key": "F#",
+          "bpm": 177,
+          "durationSec": 300,
+          "free": true,
+          "stems": [
+            {
+              "instrument": "Batería",
+              "audio": "ph_drums.mp3"
+            },
+            {
+              "instrument": "Bajo",
+              "audio": "ph_bass.mp3"
+            },
+            {
+              "instrument": "Guitarra 2",
+              "audio": "ph_guitar2.mp3"
+            }
+          ]
+        },
+        {
+          "id": "metal_02",
+          "title": "Metal 02",
+          "key": "Bm",
+          "bpm": 120,
+          "durationSec": 300,
+          "free": true,
+          "stems": [
+            {
+              "instrument": "Batería",
+              "audio": "ph_drums.mp3"
+            },
+            {
+              "instrument": "Bajo",
+              "audio": "ph_bass.mp3"
+            },
+            {
+              "instrument": "Guitarra 1",
+              "audio": "ph_guitar.mp3"
+            },
+            {
+              "instrument": "Guitarra 2",
+              "audio": "ph_guitar2.mp3"
+            }
+          ]
+        },
+        {
+          "id": "metal_03",
+          "title": "Metal 03",
+          "key": "A#",
+          "bpm": 147,
+          "durationSec": 180,
+          "free": false,
+          "stems": [
+            {
+              "instrument": "Batería",
+              "audio": "ph_drums.mp3"
+            },
+            {
+              "instrument": "Bajo",
+              "audio": "ph_bass.mp3"
+            },
+            {
+              "instrument": "Guitarra 1",
+              "audio": "ph_guitar.mp3"
+            },
+            {
+              "instrument": "Guitarra 2",
+              "audio": "ph_guitar2.mp3"
+            },
+            {
+              "instrument": "Piano",
+              "audio": "ph_piano.mp3"
+            }
+          ]
+        },
+        {
+          "id": "metal_04",
+          "title": "Metal 04",
+          "key": "Em",
+          "bpm": 152,
+          "durationSec": 240,
+          "free": false,
+          "stems": [
+            {
+              "instrument": "Batería",
+              "audio": "ph_drums.mp3"
+            },
+            {
+              "instrument": "Bajo",
+              "audio": "ph_bass.mp3"
+            },
+            {
+              "instrument": "Guitarra 1",
+              "audio": "ph_guitar.mp3"
+            },
+            {
+              "instrument": "Guitarra 2",
+              "audio": "ph_guitar2.mp3"
+            },
+            {
+              "instrument": "Piano",
+              "audio": "ph_piano.mp3"
+            }
+          ]
+        },
+        {
+          "id": "metal_05",
+          "title": "Metal 05",
+          "key": "F#",
+          "bpm": 155,
+          "durationSec": 210,
+          "free": false,
+          "stems": [
+            {
+              "instrument": "Batería",
+              "audio": "ph_drums.mp3"
+            },
+            {
+              "instrument": "Bajo",
+              "audio": "ph_bass.mp3"
+            },
+            {
+              "instrument": "Guitarra 2",
+              "audio": "ph_guitar2.mp3"
+            },
+            {
+              "instrument": "Piano",
+              "audio": "ph_piano.mp3"
+            }
+          ]
+        },
+        {
+          "id": "metal_06",
+          "title": "Metal 06",
+          "key": "A",
+          "bpm": 163,
+          "durationSec": 210,
+          "free": false,
+          "stems": [
+            {
+              "instrument": "Batería",
+              "audio": "ph_drums.mp3"
+            },
+            {
+              "instrument": "Bajo",
+              "audio": "ph_bass.mp3"
+            },
+            {
+              "instrument": "Guitarra 2",
+              "audio": "ph_guitar2.mp3"
+            },
+            {
+              "instrument": "Piano",
+              "audio": "ph_piano.mp3"
+            }
+          ]
+        },
+        {
+          "id": "metal_07",
+          "title": "Metal 07",
+          "key": "F#",
+          "bpm": 139,
+          "durationSec": 240,
+          "free": false,
+          "stems": [
+            {
+              "instrument": "Batería",
+              "audio": "ph_drums.mp3"
+            },
+            {
+              "instrument": "Bajo",
+              "audio": "ph_bass.mp3"
+            },
+            {
+              "instrument": "Guitarra 1",
+              "audio": "ph_guitar.mp3"
+            },
+            {
+              "instrument": "Piano",
+              "audio": "ph_piano.mp3"
+            }
+          ]
+        },
+        {
+          "id": "metal_08",
+          "title": "Metal 08",
+          "key": "Dm",
+          "bpm": 149,
+          "durationSec": 270,
+          "free": false,
+          "stems": [
+            {
+              "instrument": "Batería",
+              "audio": "ph_drums.mp3"
+            },
+            {
+              "instrument": "Bajo",
+              "audio": "ph_bass.mp3"
+            },
+            {
+              "instrument": "Guitarra 2",
+              "audio": "ph_guitar2.mp3"
+            },
+            {
+              "instrument": "Piano",
+              "audio": "ph_piano.mp3"
+            }
+          ]
+        },
+        {
+          "id": "metal_09",
+          "title": "Metal 09",
+          "key": "A",
+          "bpm": 162,
+          "durationSec": 180,
+          "free": false,
+          "stems": [
+            {
+              "instrument": "Batería",
+              "audio": "ph_drums.mp3"
+            },
+            {
+              "instrument": "Bajo",
+              "audio": "ph_bass.mp3"
+            },
+            {
+              "instrument": "Guitarra 1",
+              "audio": "ph_guitar.mp3"
+            },
+            {
+              "instrument": "Guitarra 2",
+              "audio": "ph_guitar2.mp3"
+            },
+            {
+              "instrument": "Piano",
+              "audio": "ph_piano.mp3"
+            }
+          ]
+        },
+        {
+          "id": "metal_10",
+          "title": "Metal 10",
+          "key": "A",
+          "bpm": 172,
+          "durationSec": 210,
+          "free": false,
+          "stems": [
+            {
+              "instrument": "Batería",
+              "audio": "ph_drums.mp3"
+            },
+            {
+              "instrument": "Bajo",
+              "audio": "ph_bass.mp3"
+            },
+            {
+              "instrument": "Guitarra 1",
+              "audio": "ph_guitar.mp3"
+            },
+            {
+              "instrument": "Guitarra 2",
+              "audio": "ph_guitar2.mp3"
+            },
+            {
+              "instrument": "Piano",
+              "audio": "ph_piano.mp3"
+            }
+          ]
+        }
+      ]
     },
     {
-     "id": "blues_10",
-     "title": "Boogie Blues",
-     "key": "G",
-     "bpm": 100,
-     "durationSec": 181,
-     "audio": "placeholder.mp3",
-     "free": false
+      "id": "balada",
+      "name": "Balada",
+      "tracks": [
+        {
+          "id": "balada_01",
+          "title": "Balada 01",
+          "key": "C#",
+          "bpm": 64,
+          "durationSec": 180,
+          "free": true,
+          "stems": [
+            {
+              "instrument": "Batería",
+              "audio": "ph_drums.mp3"
+            },
+            {
+              "instrument": "Bajo",
+              "audio": "ph_bass.mp3"
+            },
+            {
+              "instrument": "Guitarra 1",
+              "audio": "ph_guitar.mp3"
+            }
+          ]
+        },
+        {
+          "id": "balada_02",
+          "title": "Balada 02",
+          "key": "Dm",
+          "bpm": 79,
+          "durationSec": 180,
+          "free": true,
+          "stems": [
+            {
+              "instrument": "Batería",
+              "audio": "ph_drums.mp3"
+            },
+            {
+              "instrument": "Bajo",
+              "audio": "ph_bass.mp3"
+            },
+            {
+              "instrument": "Guitarra 2",
+              "audio": "ph_guitar2.mp3"
+            }
+          ]
+        },
+        {
+          "id": "balada_03",
+          "title": "Balada 03",
+          "key": "Gm",
+          "bpm": 82,
+          "durationSec": 270,
+          "free": false,
+          "stems": [
+            {
+              "instrument": "Batería",
+              "audio": "ph_drums.mp3"
+            },
+            {
+              "instrument": "Bajo",
+              "audio": "ph_bass.mp3"
+            },
+            {
+              "instrument": "Guitarra 1",
+              "audio": "ph_guitar.mp3"
+            },
+            {
+              "instrument": "Piano",
+              "audio": "ph_piano.mp3"
+            }
+          ]
+        },
+        {
+          "id": "balada_04",
+          "title": "Balada 04",
+          "key": "D#",
+          "bpm": 80,
+          "durationSec": 180,
+          "free": false,
+          "stems": [
+            {
+              "instrument": "Batería",
+              "audio": "ph_drums.mp3"
+            },
+            {
+              "instrument": "Bajo",
+              "audio": "ph_bass.mp3"
+            },
+            {
+              "instrument": "Guitarra 1",
+              "audio": "ph_guitar.mp3"
+            },
+            {
+              "instrument": "Piano",
+              "audio": "ph_piano.mp3"
+            }
+          ]
+        },
+        {
+          "id": "balada_05",
+          "title": "Balada 05",
+          "key": "Dm",
+          "bpm": 85,
+          "durationSec": 300,
+          "free": false,
+          "stems": [
+            {
+              "instrument": "Batería",
+              "audio": "ph_drums.mp3"
+            },
+            {
+              "instrument": "Bajo",
+              "audio": "ph_bass.mp3"
+            },
+            {
+              "instrument": "Guitarra 1",
+              "audio": "ph_guitar.mp3"
+            },
+            {
+              "instrument": "Piano",
+              "audio": "ph_piano.mp3"
+            }
+          ]
+        },
+        {
+          "id": "balada_06",
+          "title": "Balada 06",
+          "key": "Dm",
+          "bpm": 67,
+          "durationSec": 180,
+          "free": false,
+          "stems": [
+            {
+              "instrument": "Batería",
+              "audio": "ph_drums.mp3"
+            },
+            {
+              "instrument": "Bajo",
+              "audio": "ph_bass.mp3"
+            },
+            {
+              "instrument": "Piano",
+              "audio": "ph_piano.mp3"
+            }
+          ]
+        },
+        {
+          "id": "balada_07",
+          "title": "Balada 07",
+          "key": "Bm",
+          "bpm": 81,
+          "durationSec": 300,
+          "free": false,
+          "stems": [
+            {
+              "instrument": "Batería",
+              "audio": "ph_drums.mp3"
+            },
+            {
+              "instrument": "Bajo",
+              "audio": "ph_bass.mp3"
+            },
+            {
+              "instrument": "Guitarra 2",
+              "audio": "ph_guitar2.mp3"
+            }
+          ]
+        },
+        {
+          "id": "balada_08",
+          "title": "Balada 08",
+          "key": "F",
+          "bpm": 77,
+          "durationSec": 270,
+          "free": false,
+          "stems": [
+            {
+              "instrument": "Batería",
+              "audio": "ph_drums.mp3"
+            },
+            {
+              "instrument": "Bajo",
+              "audio": "ph_bass.mp3"
+            },
+            {
+              "instrument": "Guitarra 1",
+              "audio": "ph_guitar.mp3"
+            },
+            {
+              "instrument": "Guitarra 2",
+              "audio": "ph_guitar2.mp3"
+            },
+            {
+              "instrument": "Piano",
+              "audio": "ph_piano.mp3"
+            }
+          ]
+        },
+        {
+          "id": "balada_09",
+          "title": "Balada 09",
+          "key": "G#",
+          "bpm": 84,
+          "durationSec": 210,
+          "free": false,
+          "stems": [
+            {
+              "instrument": "Batería",
+              "audio": "ph_drums.mp3"
+            },
+            {
+              "instrument": "Bajo",
+              "audio": "ph_bass.mp3"
+            },
+            {
+              "instrument": "Guitarra 1",
+              "audio": "ph_guitar.mp3"
+            },
+            {
+              "instrument": "Guitarra 2",
+              "audio": "ph_guitar2.mp3"
+            },
+            {
+              "instrument": "Piano",
+              "audio": "ph_piano.mp3"
+            }
+          ]
+        },
+        {
+          "id": "balada_10",
+          "title": "Balada 10",
+          "key": "A",
+          "bpm": 74,
+          "durationSec": 180,
+          "free": false,
+          "stems": [
+            {
+              "instrument": "Batería",
+              "audio": "ph_drums.mp3"
+            },
+            {
+              "instrument": "Bajo",
+              "audio": "ph_bass.mp3"
+            },
+            {
+              "instrument": "Guitarra 1",
+              "audio": "ph_guitar.mp3"
+            },
+            {
+              "instrument": "Guitarra 2",
+              "audio": "ph_guitar2.mp3"
+            },
+            {
+              "instrument": "Piano",
+              "audio": "ph_piano.mp3"
+            }
+          ]
+        }
+      ]
     }
-   ]
-  },
-  {
-   "id": "rock",
-   "name": "Rock",
-   "tracks": [
-    {
-     "id": "rock_01",
-     "title": "Classic Rock",
-     "key": "F#",
-     "bpm": 137,
-     "durationSec": 353,
-     "audio": "placeholder.mp3",
-     "free": true
-    },
-    {
-     "id": "rock_02",
-     "title": "Hard Rock",
-     "key": "A",
-     "bpm": 114,
-     "durationSec": 173,
-     "audio": "placeholder.mp3",
-     "free": true
-    },
-    {
-     "id": "rock_03",
-     "title": "Garage Rock",
-     "key": "F",
-     "bpm": 108,
-     "durationSec": 298,
-     "audio": "placeholder.mp3",
-     "free": false
-    },
-    {
-     "id": "rock_04",
-     "title": "Arena Rock",
-     "key": "D#",
-     "bpm": 109,
-     "durationSec": 210,
-     "audio": "placeholder.mp3",
-     "free": false
-    },
-    {
-     "id": "rock_05",
-     "title": "Indie Rock",
-     "key": "F#",
-     "bpm": 119,
-     "durationSec": 242,
-     "audio": "placeholder.mp3",
-     "free": false
-    },
-    {
-     "id": "rock_06",
-     "title": "70s Rock",
-     "key": "A#",
-     "bpm": 137,
-     "durationSec": 246,
-     "audio": "placeholder.mp3",
-     "free": false
-    },
-    {
-     "id": "rock_07",
-     "title": "Stadium Anthem",
-     "key": "D",
-     "bpm": 106,
-     "durationSec": 182,
-     "audio": "placeholder.mp3",
-     "free": false
-    },
-    {
-     "id": "rock_08",
-     "title": "Rock Drive",
-     "key": "F#",
-     "bpm": 103,
-     "durationSec": 255,
-     "audio": "placeholder.mp3",
-     "free": false
-    },
-    {
-     "id": "rock_09",
-     "title": "Power Trio",
-     "key": "E",
-     "bpm": 143,
-     "durationSec": 368,
-     "audio": "placeholder.mp3",
-     "free": false
-    },
-    {
-     "id": "rock_10",
-     "title": "Road Rock",
-     "key": "D",
-     "bpm": 129,
-     "durationSec": 382,
-     "audio": "placeholder.mp3",
-     "free": false
-    }
-   ]
-  },
-  {
-   "id": "funk",
-   "name": "Funk",
-   "tracks": [
-    {
-     "id": "funk_01",
-     "title": "Funky Groove",
-     "key": "D",
-     "bpm": 104,
-     "durationSec": 277,
-     "audio": "placeholder.mp3",
-     "free": true
-    },
-    {
-     "id": "funk_02",
-     "title": "Soul Funk",
-     "key": "B",
-     "bpm": 117,
-     "durationSec": 274,
-     "audio": "placeholder.mp3",
-     "free": true
-    },
-    {
-     "id": "funk_03",
-     "title": "P-Funk Jam",
-     "key": "A#",
-     "bpm": 113,
-     "durationSec": 303,
-     "audio": "placeholder.mp3",
-     "free": false
-    },
-    {
-     "id": "funk_04",
-     "title": "Wah Funk",
-     "key": "F",
-     "bpm": 110,
-     "durationSec": 325,
-     "audio": "placeholder.mp3",
-     "free": false
-    },
-    {
-     "id": "funk_05",
-     "title": "Slap Bass Funk",
-     "key": "G#",
-     "bpm": 109,
-     "durationSec": 297,
-     "audio": "placeholder.mp3",
-     "free": false
-    },
-    {
-     "id": "funk_06",
-     "title": "Disco Funk",
-     "key": "F#",
-     "bpm": 97,
-     "durationSec": 210,
-     "audio": "placeholder.mp3",
-     "free": false
-    },
-    {
-     "id": "funk_07",
-     "title": "Funk Rock",
-     "key": "F",
-     "bpm": 108,
-     "durationSec": 234,
-     "audio": "placeholder.mp3",
-     "free": false
-    },
-    {
-     "id": "funk_08",
-     "title": "Brass Funk",
-     "key": "D",
-     "bpm": 99,
-     "durationSec": 400,
-     "audio": "placeholder.mp3",
-     "free": false
-    },
-    {
-     "id": "funk_09",
-     "title": "Minor Funk",
-     "key": "D#",
-     "bpm": 96,
-     "durationSec": 189,
-     "audio": "placeholder.mp3",
-     "free": false
-    },
-    {
-     "id": "funk_10",
-     "title": "Late Night Funk",
-     "key": "F",
-     "bpm": 113,
-     "durationSec": 310,
-     "audio": "placeholder.mp3",
-     "free": false
-    }
-   ]
-  },
-  {
-   "id": "jazz",
-   "name": "Jazz",
-   "tracks": [
-    {
-     "id": "jazz_01",
-     "title": "Jazz Blues",
-     "key": "Dm",
-     "bpm": 124,
-     "durationSec": 404,
-     "audio": "placeholder.mp3",
-     "free": true
-    },
-    {
-     "id": "jazz_02",
-     "title": "Bossa Nova",
-     "key": "F#",
-     "bpm": 138,
-     "durationSec": 185,
-     "audio": "placeholder.mp3",
-     "free": true
-    },
-    {
-     "id": "jazz_03",
-     "title": "Swing",
-     "key": "A#m",
-     "bpm": 114,
-     "durationSec": 392,
-     "audio": "placeholder.mp3",
-     "free": false
-    },
-    {
-     "id": "jazz_04",
-     "title": "Modal Jazz",
-     "key": "G#",
-     "bpm": 88,
-     "durationSec": 181,
-     "audio": "placeholder.mp3",
-     "free": false
-    },
-    {
-     "id": "jazz_05",
-     "title": "ii-V-I Jam",
-     "key": "G#m",
-     "bpm": 119,
-     "durationSec": 378,
-     "audio": "placeholder.mp3",
-     "free": false
-    },
-    {
-     "id": "jazz_06",
-     "title": "Jazz Waltz",
-     "key": "C#",
-     "bpm": 129,
-     "durationSec": 327,
-     "audio": "placeholder.mp3",
-     "free": false
-    },
-    {
-     "id": "jazz_07",
-     "title": "Cool Jazz",
-     "key": "Am",
-     "bpm": 139,
-     "durationSec": 331,
-     "audio": "placeholder.mp3",
-     "free": false
-    },
-    {
-     "id": "jazz_08",
-     "title": "Latin Jazz",
-     "key": "B",
-     "bpm": 158,
-     "durationSec": 209,
-     "audio": "placeholder.mp3",
-     "free": false
-    },
-    {
-     "id": "jazz_09",
-     "title": "Ballad Jazz",
-     "key": "Em",
-     "bpm": 87,
-     "durationSec": 261,
-     "audio": "placeholder.mp3",
-     "free": false
-    },
-    {
-     "id": "jazz_10",
-     "title": "Gypsy Swing",
-     "key": "C#",
-     "bpm": 96,
-     "durationSec": 276,
-     "audio": "placeholder.mp3",
-     "free": false
-    }
-   ]
-  },
-  {
-   "id": "pop",
-   "name": "Pop",
-   "tracks": [
-    {
-     "id": "pop_01",
-     "title": "Pop Anthem",
-     "key": "D#",
-     "bpm": 112,
-     "durationSec": 404,
-     "audio": "placeholder.mp3",
-     "free": true
-    },
-    {
-     "id": "pop_02",
-     "title": "Synth Pop",
-     "key": "A#",
-     "bpm": 105,
-     "durationSec": 379,
-     "audio": "placeholder.mp3",
-     "free": true
-    },
-    {
-     "id": "pop_03",
-     "title": "Acoustic Pop",
-     "key": "D#",
-     "bpm": 117,
-     "durationSec": 292,
-     "audio": "placeholder.mp3",
-     "free": false
-    },
-    {
-     "id": "pop_04",
-     "title": "Dance Pop",
-     "key": "B",
-     "bpm": 126,
-     "durationSec": 370,
-     "audio": "placeholder.mp3",
-     "free": false
-    },
-    {
-     "id": "pop_05",
-     "title": "Pop Rock",
-     "key": "F",
-     "bpm": 108,
-     "durationSec": 362,
-     "audio": "placeholder.mp3",
-     "free": false
-    },
-    {
-     "id": "pop_06",
-     "title": "80s Pop",
-     "key": "D",
-     "bpm": 121,
-     "durationSec": 344,
-     "audio": "placeholder.mp3",
-     "free": false
-    },
-    {
-     "id": "pop_07",
-     "title": "Indie Pop",
-     "key": "C",
-     "bpm": 104,
-     "durationSec": 192,
-     "audio": "placeholder.mp3",
-     "free": false
-    },
-    {
-     "id": "pop_08",
-     "title": "Summer Pop",
-     "key": "B",
-     "bpm": 104,
-     "durationSec": 268,
-     "audio": "placeholder.mp3",
-     "free": false
-    },
-    {
-     "id": "pop_09",
-     "title": "Pop Ballad",
-     "key": "G",
-     "bpm": 107,
-     "durationSec": 156,
-     "audio": "placeholder.mp3",
-     "free": false
-    },
-    {
-     "id": "pop_10",
-     "title": "Electro Pop",
-     "key": "E",
-     "bpm": 126,
-     "durationSec": 243,
-     "audio": "placeholder.mp3",
-     "free": false
-    }
-   ]
-  },
-  {
-   "id": "soul",
-   "name": "Soul / R&B",
-   "tracks": [
-    {
-     "id": "soul_01",
-     "title": "Soul Groove",
-     "key": "C#",
-     "bpm": 88,
-     "durationSec": 152,
-     "audio": "placeholder.mp3",
-     "free": true
-    },
-    {
-     "id": "soul_02",
-     "title": "Neo Soul",
-     "key": "B",
-     "bpm": 96,
-     "durationSec": 339,
-     "audio": "placeholder.mp3",
-     "free": true
-    },
-    {
-     "id": "soul_03",
-     "title": "Motown",
-     "key": "F#",
-     "bpm": 106,
-     "durationSec": 313,
-     "audio": "placeholder.mp3",
-     "free": false
-    },
-    {
-     "id": "soul_04",
-     "title": "R&B Slow Jam",
-     "key": "B",
-     "bpm": 102,
-     "durationSec": 177,
-     "audio": "placeholder.mp3",
-     "free": false
-    },
-    {
-     "id": "soul_05",
-     "title": "Gospel Soul",
-     "key": "E",
-     "bpm": 105,
-     "durationSec": 350,
-     "audio": "placeholder.mp3",
-     "free": false
-    },
-    {
-     "id": "soul_06",
-     "title": "Smooth R&B",
-     "key": "D#",
-     "bpm": 95,
-     "durationSec": 351,
-     "audio": "placeholder.mp3",
-     "free": false
-    },
-    {
-     "id": "soul_07",
-     "title": "Funky Soul",
-     "key": "A#",
-     "bpm": 100,
-     "durationSec": 355,
-     "audio": "placeholder.mp3",
-     "free": false
-    },
-    {
-     "id": "soul_08",
-     "title": "Soul Ballad",
-     "key": "A",
-     "bpm": 82,
-     "durationSec": 184,
-     "audio": "placeholder.mp3",
-     "free": false
-    },
-    {
-     "id": "soul_09",
-     "title": "90s R&B",
-     "key": "C",
-     "bpm": 98,
-     "durationSec": 233,
-     "audio": "placeholder.mp3",
-     "free": false
-    },
-    {
-     "id": "soul_10",
-     "title": "Southern Soul",
-     "key": "A#",
-     "bpm": 91,
-     "durationSec": 176,
-     "audio": "placeholder.mp3",
-     "free": false
-    }
-   ]
-  },
-  {
-   "id": "country",
-   "name": "Country",
-   "tracks": [
-    {
-     "id": "country_01",
-     "title": "Country Shuffle",
-     "key": "A#",
-     "bpm": 90,
-     "durationSec": 227,
-     "audio": "placeholder.mp3",
-     "free": true
-    },
-    {
-     "id": "country_02",
-     "title": "Bluegrass",
-     "key": "F",
-     "bpm": 96,
-     "durationSec": 336,
-     "audio": "placeholder.mp3",
-     "free": true
-    },
-    {
-     "id": "country_03",
-     "title": "Country Ballad",
-     "key": "F#",
-     "bpm": 91,
-     "durationSec": 186,
-     "audio": "placeholder.mp3",
-     "free": false
-    },
-    {
-     "id": "country_04",
-     "title": "Honky Tonk",
-     "key": "C",
-     "bpm": 129,
-     "durationSec": 342,
-     "audio": "placeholder.mp3",
-     "free": false
-    },
-    {
-     "id": "country_05",
-     "title": "Country Rock",
-     "key": "B",
-     "bpm": 130,
-     "durationSec": 279,
-     "audio": "placeholder.mp3",
-     "free": false
-    },
-    {
-     "id": "country_06",
-     "title": "Nashville",
-     "key": "D",
-     "bpm": 128,
-     "durationSec": 336,
-     "audio": "placeholder.mp3",
-     "free": false
-    },
-    {
-     "id": "country_07",
-     "title": "Western Swing",
-     "key": "E",
-     "bpm": 97,
-     "durationSec": 209,
-     "audio": "placeholder.mp3",
-     "free": false
-    },
-    {
-     "id": "country_08",
-     "title": "Country Pop",
-     "key": "E",
-     "bpm": 119,
-     "durationSec": 395,
-     "audio": "placeholder.mp3",
-     "free": false
-    },
-    {
-     "id": "country_09",
-     "title": "Outlaw Country",
-     "key": "E",
-     "bpm": 109,
-     "durationSec": 193,
-     "audio": "placeholder.mp3",
-     "free": false
-    },
-    {
-     "id": "country_10",
-     "title": "Train Beat",
-     "key": "B",
-     "bpm": 96,
-     "durationSec": 325,
-     "audio": "placeholder.mp3",
-     "free": false
-    }
-   ]
-  },
-  {
-   "id": "reggae",
-   "name": "Reggae",
-   "tracks": [
-    {
-     "id": "reggae_01",
-     "title": "One Drop",
-     "key": "G#",
-     "bpm": 78,
-     "durationSec": 395,
-     "audio": "placeholder.mp3",
-     "free": true
-    },
-    {
-     "id": "reggae_02",
-     "title": "Roots Reggae",
-     "key": "G#",
-     "bpm": 75,
-     "durationSec": 414,
-     "audio": "placeholder.mp3",
-     "free": true
-    },
-    {
-     "id": "reggae_03",
-     "title": "Reggae Skank",
-     "key": "A",
-     "bpm": 76,
-     "durationSec": 420,
-     "audio": "placeholder.mp3",
-     "free": false
-    },
-    {
-     "id": "reggae_04",
-     "title": "Dub",
-     "key": "D",
-     "bpm": 74,
-     "durationSec": 163,
-     "audio": "placeholder.mp3",
-     "free": false
-    },
-    {
-     "id": "reggae_05",
-     "title": "Rocksteady",
-     "key": "F",
-     "bpm": 79,
-     "durationSec": 196,
-     "audio": "placeholder.mp3",
-     "free": false
-    },
-    {
-     "id": "reggae_06",
-     "title": "Ska",
-     "key": "G#",
-     "bpm": 97,
-     "durationSec": 283,
-     "audio": "placeholder.mp3",
-     "free": false
-    },
-    {
-     "id": "reggae_07",
-     "title": "Lovers Rock",
-     "key": "F",
-     "bpm": 81,
-     "durationSec": 235,
-     "audio": "placeholder.mp3",
-     "free": false
-    },
-    {
-     "id": "reggae_08",
-     "title": "Dancehall",
-     "key": "D",
-     "bpm": 94,
-     "durationSec": 264,
-     "audio": "placeholder.mp3",
-     "free": false
-    },
-    {
-     "id": "reggae_09",
-     "title": "Reggae Pop",
-     "key": "F",
-     "bpm": 87,
-     "durationSec": 407,
-     "audio": "placeholder.mp3",
-     "free": false
-    },
-    {
-     "id": "reggae_10",
-     "title": "Island Groove",
-     "key": "D",
-     "bpm": 90,
-     "durationSec": 264,
-     "audio": "placeholder.mp3",
-     "free": false
-    }
-   ]
-  },
-  {
-   "id": "metal",
-   "name": "Metal",
-   "tracks": [
-    {
-     "id": "metal_01",
-     "title": "Heavy Metal",
-     "key": "F#m",
-     "bpm": 144,
-     "durationSec": 272,
-     "audio": "placeholder.mp3",
-     "free": true
-    },
-    {
-     "id": "metal_02",
-     "title": "Thrash",
-     "key": "D#",
-     "bpm": 149,
-     "durationSec": 252,
-     "audio": "placeholder.mp3",
-     "free": true
-    },
-    {
-     "id": "metal_03",
-     "title": "Power Metal",
-     "key": "Fm",
-     "bpm": 183,
-     "durationSec": 332,
-     "audio": "placeholder.mp3",
-     "free": false
-    },
-    {
-     "id": "metal_04",
-     "title": "Doom",
-     "key": "G#",
-     "bpm": 123,
-     "durationSec": 164,
-     "audio": "placeholder.mp3",
-     "free": false
-    },
-    {
-     "id": "metal_05",
-     "title": "Groove Metal",
-     "key": "C#m",
-     "bpm": 180,
-     "durationSec": 282,
-     "audio": "placeholder.mp3",
-     "free": false
-    },
-    {
-     "id": "metal_06",
-     "title": "Metalcore",
-     "key": "C",
-     "bpm": 197,
-     "durationSec": 326,
-     "audio": "placeholder.mp3",
-     "free": false
-    },
-    {
-     "id": "metal_07",
-     "title": "Speed Metal",
-     "key": "Em",
-     "bpm": 164,
-     "durationSec": 336,
-     "audio": "placeholder.mp3",
-     "free": false
-    },
-    {
-     "id": "metal_08",
-     "title": "Nu Metal",
-     "key": "A#",
-     "bpm": 148,
-     "durationSec": 202,
-     "audio": "placeholder.mp3",
-     "free": false
-    },
-    {
-     "id": "metal_09",
-     "title": "Prog Metal",
-     "key": "Cm",
-     "bpm": 180,
-     "durationSec": 250,
-     "audio": "placeholder.mp3",
-     "free": false
-    },
-    {
-     "id": "metal_10",
-     "title": "Djent",
-     "key": "D",
-     "bpm": 146,
-     "durationSec": 397,
-     "audio": "placeholder.mp3",
-     "free": false
-    }
-   ]
-  },
-  {
-   "id": "ballad",
-   "name": "Balada",
-   "tracks": [
-    {
-     "id": "ballad_01",
-     "title": "Power Ballad",
-     "key": "F#m",
-     "bpm": 79,
-     "durationSec": 150,
-     "audio": "placeholder.mp3",
-     "free": true
-    },
-    {
-     "id": "ballad_02",
-     "title": "Piano Ballad",
-     "key": "E",
-     "bpm": 80,
-     "durationSec": 326,
-     "audio": "placeholder.mp3",
-     "free": true
-    },
-    {
-     "id": "ballad_03",
-     "title": "Acoustic Ballad",
-     "key": "G",
-     "bpm": 62,
-     "durationSec": 211,
-     "audio": "placeholder.mp3",
-     "free": false
-    },
-    {
-     "id": "ballad_04",
-     "title": "Soul Ballad",
-     "key": "D#m",
-     "bpm": 85,
-     "durationSec": 252,
-     "audio": "placeholder.mp3",
-     "free": false
-    },
-    {
-     "id": "ballad_05",
-     "title": "Rock Ballad",
-     "key": "E",
-     "bpm": 65,
-     "durationSec": 372,
-     "audio": "placeholder.mp3",
-     "free": false
-    },
-    {
-     "id": "ballad_06",
-     "title": "Slow Dance",
-     "key": "G",
-     "bpm": 70,
-     "durationSec": 194,
-     "audio": "placeholder.mp3",
-     "free": false
-    },
-    {
-     "id": "ballad_07",
-     "title": "Love Song",
-     "key": "G#m",
-     "bpm": 72,
-     "durationSec": 387,
-     "audio": "placeholder.mp3",
-     "free": false
-    },
-    {
-     "id": "ballad_08",
-     "title": "Cinematic",
-     "key": "D#",
-     "bpm": 83,
-     "durationSec": 193,
-     "audio": "placeholder.mp3",
-     "free": false
-    },
-    {
-     "id": "ballad_09",
-     "title": "Sad Song",
-     "key": "G#",
-     "bpm": 65,
-     "durationSec": 237,
-     "audio": "placeholder.mp3",
-     "free": false
-    },
-    {
-     "id": "ballad_10",
-     "title": "Lighters Up",
-     "key": "Bm",
-     "bpm": 60,
-     "durationSec": 227,
-     "audio": "placeholder.mp3",
-     "free": false
-    }
-   ]
-  }
- ]
+  ]
 }

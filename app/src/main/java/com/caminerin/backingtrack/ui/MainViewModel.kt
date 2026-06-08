@@ -16,6 +16,11 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
+data class StemUi(
+    val instrument: String,
+    val enabled: Boolean,
+)
+
 data class Playback(
     val track: Track? = null,
     val isPlaying: Boolean = false,
@@ -27,6 +32,7 @@ data class Playback(
     val loop: Boolean = false,
     val metronome: Boolean = false,
     val subdivision: Subdivision = Subdivision.QUARTER,
+    val stems: List<StemUi> = emptyList(),
 )
 
 class MainViewModel(app: Application) : AndroidViewModel(app) {
@@ -55,6 +61,7 @@ class MainViewModel(app: Application) : AndroidViewModel(app) {
         viewModelScope.launch {
             while (true) {
                 if (player.isReady) {
+                    if (player.isPlaying) player.resync()
                     val p = _playback.value
                     _playback.value = p.copy(
                         positionMs = player.positionMs(),
@@ -88,7 +95,7 @@ class MainViewModel(app: Application) : AndroidViewModel(app) {
             player.play()
             pushState()
         }
-        player.load(track.audio, track.bpm)
+        player.load(track.stems.map { it.instrument to it.audio }, track.bpm)
         player.setLoop(false)
         metronome.stop()
         _playback.value = Playback(
@@ -100,6 +107,7 @@ class MainViewModel(app: Application) : AndroidViewModel(app) {
             loop = false,
             metronome = false,
             subdivision = Subdivision.QUARTER,
+            stems = track.stems.map { StemUi(it.instrument, true) },
         )
     }
 
@@ -139,6 +147,16 @@ class MainViewModel(app: Application) : AndroidViewModel(app) {
     fun setSubdivision(sub: Subdivision) {
         metronome.subdivision = sub
         _playback.value = _playback.value.copy(subdivision = sub)
+    }
+
+    fun toggleStem(index: Int) {
+        val cur = _playback.value.stems
+        val item = cur.getOrNull(index) ?: return
+        val enabled = !item.enabled
+        player.setStemEnabled(index, enabled)
+        _playback.value = _playback.value.copy(
+            stems = cur.mapIndexed { i, s -> if (i == index) s.copy(enabled = enabled) else s },
+        )
     }
 
     fun stopPlayback() {

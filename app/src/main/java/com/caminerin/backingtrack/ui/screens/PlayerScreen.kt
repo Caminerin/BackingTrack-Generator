@@ -3,6 +3,8 @@ package com.caminerin.backingtrack.ui.screens
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ExperimentalLayoutApi
+import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -10,7 +12,9 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Lock
@@ -48,7 +52,7 @@ import androidx.navigation.NavController
 import com.caminerin.backingtrack.model.Subdivision
 import com.caminerin.backingtrack.ui.MainViewModel
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalLayoutApi::class)
 @Composable
 fun PlayerScreen(vm: MainViewModel, nav: NavController) {
     val pb by vm.playback.collectAsState()
@@ -75,7 +79,7 @@ fun PlayerScreen(vm: MainViewModel, nav: NavController) {
             return@Scaffold
         }
         Column(
-            Modifier.fillMaxSize().padding(pad).padding(20.dp),
+            Modifier.fillMaxSize().padding(pad).verticalScroll(rememberScrollState()).padding(20.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
             Text(track.title, style = MaterialTheme.typography.headlineSmall, fontWeight = FontWeight.Bold)
@@ -129,6 +133,31 @@ fun PlayerScreen(vm: MainViewModel, nav: NavController) {
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
             )
             Spacer(Modifier.height(20.dp))
+
+            // Instruments (stems) on/off
+            if (pb.stems.size > 1) {
+                Card(Modifier.fillMaxWidth(), colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant)) {
+                    Column(Modifier.fillMaxWidth().padding(14.dp)) {
+                        Text("Instrumentos", fontWeight = FontWeight.SemiBold)
+                        Text(
+                            "Activa o silencia cada instrumento",
+                            style = MaterialTheme.typography.labelSmall,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        )
+                        Spacer(Modifier.height(8.dp))
+                        FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                            pb.stems.forEachIndexed { i, stem ->
+                                FilterChip(
+                                    selected = stem.enabled,
+                                    onClick = { vm.toggleStem(i) },
+                                    label = { Text(stem.instrument) },
+                                )
+                            }
+                        }
+                    }
+                }
+                Spacer(Modifier.height(16.dp))
+            }
 
             // Metronome
             Card(Modifier.fillMaxWidth(), colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant)) {

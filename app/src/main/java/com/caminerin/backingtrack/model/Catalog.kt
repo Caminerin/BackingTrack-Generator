@@ -8,6 +8,12 @@ enum class Subdivision(val label: String, val perBeat: Int) {
     SIXTEENTH("Semicorcheas", 4),
 }
 
+/** One instrument track inside a backing (e.g. "Batería" -> drums.mp3). */
+data class Stem(
+    val instrument: String,
+    val audio: String,
+)
+
 data class Track(
     val id: String,
     val title: String,
@@ -16,7 +22,7 @@ data class Track(
     val key: String,
     val bpm: Int,
     val durationSec: Int,
-    val audio: String,
+    val stems: List<Stem>,
     val free: Boolean,
 )
 
