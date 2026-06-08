@@ -899,274 +899,449 @@
     ]
   },
   "piano": {
-    "instrument": "piano_upright",
-    "license": "CC0-1.0",
-    "source": "Upright Piano KW (FreePats)",
-    "url": "https://freepats.zenvoid.org/Piano/acoustic-grand-piano.html",
+    "instrument": "piano_grand",
+    "license": "CC-BY-3.0",
+    "source": "Salamander Grand Piano V3 (Alexander Holm)",
+    "url": "https://github.com/Caminerin/SalamanderGrandPiano",
     "samples": [
-      {
-        "file": "piano/piano_30_soft.wav",
-        "rootMidi": 30,
-        "loVel": 0,
-        "hiVel": 80,
-        "seq": 1
-      },
-      {
-        "file": "piano/piano_33_soft.wav",
-        "rootMidi": 33,
-        "loVel": 0,
-        "hiVel": 80,
-        "seq": 1
-      },
       {
         "file": "piano/piano_36_soft.wav",
         "rootMidi": 36,
         "loVel": 0,
-        "hiVel": 80,
+        "hiVel": 63,
+        "seq": 1
+      },
+      {
+        "file": "piano/piano_36_mid.wav",
+        "rootMidi": 36,
+        "loVel": 64,
+        "hiVel": 101,
+        "seq": 1
+      },
+      {
+        "file": "piano/piano_36_hard.wav",
+        "rootMidi": 36,
+        "loVel": 102,
+        "hiVel": 127,
         "seq": 1
       },
       {
         "file": "piano/piano_39_soft.wav",
         "rootMidi": 39,
         "loVel": 0,
-        "hiVel": 80,
+        "hiVel": 63,
+        "seq": 1
+      },
+      {
+        "file": "piano/piano_39_mid.wav",
+        "rootMidi": 39,
+        "loVel": 64,
+        "hiVel": 101,
+        "seq": 1
+      },
+      {
+        "file": "piano/piano_39_hard.wav",
+        "rootMidi": 39,
+        "loVel": 102,
+        "hiVel": 127,
         "seq": 1
       },
       {
         "file": "piano/piano_42_soft.wav",
         "rootMidi": 42,
         "loVel": 0,
-        "hiVel": 80,
+        "hiVel": 63,
+        "seq": 1
+      },
+      {
+        "file": "piano/piano_42_mid.wav",
+        "rootMidi": 42,
+        "loVel": 64,
+        "hiVel": 101,
+        "seq": 1
+      },
+      {
+        "file": "piano/piano_42_hard.wav",
+        "rootMidi": 42,
+        "loVel": 102,
+        "hiVel": 127,
         "seq": 1
       },
       {
         "file": "piano/piano_45_soft.wav",
         "rootMidi": 45,
         "loVel": 0,
-        "hiVel": 80,
+        "hiVel": 63,
+        "seq": 1
+      },
+      {
+        "file": "piano/piano_45_mid.wav",
+        "rootMidi": 45,
+        "loVel": 64,
+        "hiVel": 101,
+        "seq": 1
+      },
+      {
+        "file": "piano/piano_45_hard.wav",
+        "rootMidi": 45,
+        "loVel": 102,
+        "hiVel": 127,
         "seq": 1
       },
       {
         "file": "piano/piano_48_soft.wav",
         "rootMidi": 48,
         "loVel": 0,
-        "hiVel": 80,
+        "hiVel": 63,
+        "seq": 1
+      },
+      {
+        "file": "piano/piano_48_mid.wav",
+        "rootMidi": 48,
+        "loVel": 64,
+        "hiVel": 101,
+        "seq": 1
+      },
+      {
+        "file": "piano/piano_48_hard.wav",
+        "rootMidi": 48,
+        "loVel": 102,
+        "hiVel": 127,
         "seq": 1
       },
       {
         "file": "piano/piano_51_soft.wav",
         "rootMidi": 51,
         "loVel": 0,
-        "hiVel": 80,
+        "hiVel": 63,
+        "seq": 1
+      },
+      {
+        "file": "piano/piano_51_mid.wav",
+        "rootMidi": 51,
+        "loVel": 64,
+        "hiVel": 101,
+        "seq": 1
+      },
+      {
+        "file": "piano/piano_51_hard.wav",
+        "rootMidi": 51,
+        "loVel": 102,
+        "hiVel": 127,
         "seq": 1
       },
       {
         "file": "piano/piano_54_soft.wav",
         "rootMidi": 54,
         "loVel": 0,
-        "hiVel": 80,
+        "hiVel": 63,
+        "seq": 1
+      },
+      {
+        "file": "piano/piano_54_mid.wav",
+        "rootMidi": 54,
+        "loVel": 64,
+        "hiVel": 101,
+        "seq": 1
+      },
+      {
+        "file": "piano/piano_54_hard.wav",
+        "rootMidi": 54,
+        "loVel": 102,
+        "hiVel": 127,
         "seq": 1
       },
       {
         "file": "piano/piano_57_soft.wav",
         "rootMidi": 57,
         "loVel": 0,
-        "hiVel": 80,
+        "hiVel": 63,
+        "seq": 1
+      },
+      {
+        "file": "piano/piano_57_mid.wav",
+        "rootMidi": 57,
+        "loVel": 64,
+        "hiVel": 101,
+        "seq": 1
+      },
+      {
+        "file": "piano/piano_57_hard.wav",
+        "rootMidi": 57,
+        "loVel": 102,
+        "hiVel": 127,
         "seq": 1
       },
       {
         "file": "piano/piano_60_soft.wav",
         "rootMidi": 60,
         "loVel": 0,
-        "hiVel": 80,
+        "hiVel": 63,
+        "seq": 1
+      },
+      {
+        "file": "piano/piano_60_mid.wav",
+        "rootMidi": 60,
+        "loVel": 64,
+        "hiVel": 101,
+        "seq": 1
+      },
+      {
+        "file": "piano/piano_60_hard.wav",
+        "rootMidi": 60,
+        "loVel": 102,
+        "hiVel": 127,
         "seq": 1
       },
       {
         "file": "piano/piano_63_soft.wav",
         "rootMidi": 63,
         "loVel": 0,
-        "hiVel": 80,
+        "hiVel": 63,
+        "seq": 1
+      },
+      {
+        "file": "piano/piano_63_mid.wav",
+        "rootMidi": 63,
+        "loVel": 64,
+        "hiVel": 101,
+        "seq": 1
+      },
+      {
+        "file": "piano/piano_63_hard.wav",
+        "rootMidi": 63,
+        "loVel": 102,
+        "hiVel": 127,
+        "seq": 1
+      },
+      {
+        "file": "piano/piano_66_soft.wav",
+        "rootMidi": 66,
+        "loVel": 0,
+        "hiVel": 63,
+        "seq": 1
+      },
+      {
+        "file": "piano/piano_66_mid.wav",
+        "rootMidi": 66,
+        "loVel": 64,
+        "hiVel": 101,
+        "seq": 1
+      },
+      {
+        "file": "piano/piano_66_hard.wav",
+        "rootMidi": 66,
+        "loVel": 102,
+        "hiVel": 127,
         "seq": 1
       },
       {
         "file": "piano/piano_69_soft.wav",
         "rootMidi": 69,
         "loVel": 0,
-        "hiVel": 80,
+        "hiVel": 63,
+        "seq": 1
+      },
+      {
+        "file": "piano/piano_69_mid.wav",
+        "rootMidi": 69,
+        "loVel": 64,
+        "hiVel": 101,
+        "seq": 1
+      },
+      {
+        "file": "piano/piano_69_hard.wav",
+        "rootMidi": 69,
+        "loVel": 102,
+        "hiVel": 127,
         "seq": 1
       },
       {
         "file": "piano/piano_72_soft.wav",
         "rootMidi": 72,
         "loVel": 0,
-        "hiVel": 80,
+        "hiVel": 63,
+        "seq": 1
+      },
+      {
+        "file": "piano/piano_72_mid.wav",
+        "rootMidi": 72,
+        "loVel": 64,
+        "hiVel": 101,
+        "seq": 1
+      },
+      {
+        "file": "piano/piano_72_hard.wav",
+        "rootMidi": 72,
+        "loVel": 102,
+        "hiVel": 127,
         "seq": 1
       },
       {
         "file": "piano/piano_75_soft.wav",
         "rootMidi": 75,
         "loVel": 0,
-        "hiVel": 80,
+        "hiVel": 63,
+        "seq": 1
+      },
+      {
+        "file": "piano/piano_75_mid.wav",
+        "rootMidi": 75,
+        "loVel": 64,
+        "hiVel": 101,
+        "seq": 1
+      },
+      {
+        "file": "piano/piano_75_hard.wav",
+        "rootMidi": 75,
+        "loVel": 102,
+        "hiVel": 127,
         "seq": 1
       },
       {
         "file": "piano/piano_78_soft.wav",
         "rootMidi": 78,
         "loVel": 0,
-        "hiVel": 80,
+        "hiVel": 63,
+        "seq": 1
+      },
+      {
+        "file": "piano/piano_78_mid.wav",
+        "rootMidi": 78,
+        "loVel": 64,
+        "hiVel": 101,
+        "seq": 1
+      },
+      {
+        "file": "piano/piano_78_hard.wav",
+        "rootMidi": 78,
+        "loVel": 102,
+        "hiVel": 127,
         "seq": 1
       },
       {
         "file": "piano/piano_81_soft.wav",
         "rootMidi": 81,
         "loVel": 0,
-        "hiVel": 80,
+        "hiVel": 63,
+        "seq": 1
+      },
+      {
+        "file": "piano/piano_81_mid.wav",
+        "rootMidi": 81,
+        "loVel": 64,
+        "hiVel": 101,
+        "seq": 1
+      },
+      {
+        "file": "piano/piano_81_hard.wav",
+        "rootMidi": 81,
+        "loVel": 102,
+        "hiVel": 127,
         "seq": 1
       },
       {
         "file": "piano/piano_84_soft.wav",
         "rootMidi": 84,
         "loVel": 0,
-        "hiVel": 80,
+        "hiVel": 63,
+        "seq": 1
+      },
+      {
+        "file": "piano/piano_84_mid.wav",
+        "rootMidi": 84,
+        "loVel": 64,
+        "hiVel": 101,
+        "seq": 1
+      },
+      {
+        "file": "piano/piano_84_hard.wav",
+        "rootMidi": 84,
+        "loVel": 102,
+        "hiVel": 127,
         "seq": 1
       },
       {
         "file": "piano/piano_87_soft.wav",
         "rootMidi": 87,
         "loVel": 0,
-        "hiVel": 80,
+        "hiVel": 63,
+        "seq": 1
+      },
+      {
+        "file": "piano/piano_87_mid.wav",
+        "rootMidi": 87,
+        "loVel": 64,
+        "hiVel": 101,
+        "seq": 1
+      },
+      {
+        "file": "piano/piano_87_hard.wav",
+        "rootMidi": 87,
+        "loVel": 102,
+        "hiVel": 127,
         "seq": 1
       },
       {
         "file": "piano/piano_90_soft.wav",
         "rootMidi": 90,
         "loVel": 0,
-        "hiVel": 80,
+        "hiVel": 63,
         "seq": 1
       },
       {
-        "file": "piano/piano_30_hard.wav",
-        "rootMidi": 30,
-        "loVel": 81,
-        "hiVel": 127,
-        "seq": 1
-      },
-      {
-        "file": "piano/piano_33_hard.wav",
-        "rootMidi": 33,
-        "loVel": 81,
-        "hiVel": 127,
-        "seq": 1
-      },
-      {
-        "file": "piano/piano_36_hard.wav",
-        "rootMidi": 36,
-        "loVel": 81,
-        "hiVel": 127,
-        "seq": 1
-      },
-      {
-        "file": "piano/piano_39_hard.wav",
-        "rootMidi": 39,
-        "loVel": 81,
-        "hiVel": 127,
-        "seq": 1
-      },
-      {
-        "file": "piano/piano_42_hard.wav",
-        "rootMidi": 42,
-        "loVel": 81,
-        "hiVel": 127,
-        "seq": 1
-      },
-      {
-        "file": "piano/piano_48_hard.wav",
-        "rootMidi": 48,
-        "loVel": 81,
-        "hiVel": 127,
-        "seq": 1
-      },
-      {
-        "file": "piano/piano_51_hard.wav",
-        "rootMidi": 51,
-        "loVel": 81,
-        "hiVel": 127,
-        "seq": 1
-      },
-      {
-        "file": "piano/piano_54_hard.wav",
-        "rootMidi": 54,
-        "loVel": 81,
-        "hiVel": 127,
-        "seq": 1
-      },
-      {
-        "file": "piano/piano_57_hard.wav",
-        "rootMidi": 57,
-        "loVel": 81,
-        "hiVel": 127,
-        "seq": 1
-      },
-      {
-        "file": "piano/piano_63_hard.wav",
-        "rootMidi": 63,
-        "loVel": 81,
-        "hiVel": 127,
-        "seq": 1
-      },
-      {
-        "file": "piano/piano_69_hard.wav",
-        "rootMidi": 69,
-        "loVel": 81,
-        "hiVel": 127,
-        "seq": 1
-      },
-      {
-        "file": "piano/piano_72_hard.wav",
-        "rootMidi": 72,
-        "loVel": 81,
-        "hiVel": 127,
-        "seq": 1
-      },
-      {
-        "file": "piano/piano_75_hard.wav",
-        "rootMidi": 75,
-        "loVel": 81,
-        "hiVel": 127,
-        "seq": 1
-      },
-      {
-        "file": "piano/piano_78_hard.wav",
-        "rootMidi": 78,
-        "loVel": 81,
-        "hiVel": 127,
-        "seq": 1
-      },
-      {
-        "file": "piano/piano_81_hard.wav",
-        "rootMidi": 81,
-        "loVel": 81,
-        "hiVel": 127,
-        "seq": 1
-      },
-      {
-        "file": "piano/piano_84_hard.wav",
-        "rootMidi": 84,
-        "loVel": 81,
-        "hiVel": 127,
-        "seq": 1
-      },
-      {
-        "file": "piano/piano_87_hard.wav",
-        "rootMidi": 87,
-        "loVel": 81,
-        "hiVel": 127,
+        "file": "piano/piano_90_mid.wav",
+        "rootMidi": 90,
+        "loVel": 64,
+        "hiVel": 101,
         "seq": 1
       },
       {
         "file": "piano/piano_90_hard.wav",
         "rootMidi": 90,
-        "loVel": 81,
+        "loVel": 102,
+        "hiVel": 127,
+        "seq": 1
+      },
+      {
+        "file": "piano/piano_93_soft.wav",
+        "rootMidi": 93,
+        "loVel": 0,
+        "hiVel": 63,
+        "seq": 1
+      },
+      {
+        "file": "piano/piano_93_mid.wav",
+        "rootMidi": 93,
+        "loVel": 64,
+        "hiVel": 101,
+        "seq": 1
+      },
+      {
+        "file": "piano/piano_93_hard.wav",
+        "rootMidi": 93,
+        "loVel": 102,
+        "hiVel": 127,
+        "seq": 1
+      },
+      {
+        "file": "piano/piano_96_soft.wav",
+        "rootMidi": 96,
+        "loVel": 0,
+        "hiVel": 63,
+        "seq": 1
+      },
+      {
+        "file": "piano/piano_96_mid.wav",
+        "rootMidi": 96,
+        "loVel": 64,
+        "hiVel": 101,
+        "seq": 1
+      },
+      {
+        "file": "piano/piano_96_hard.wav",
+        "rootMidi": 96,
+        "loVel": 102,
         "hiVel": 127,
         "seq": 1
       }
