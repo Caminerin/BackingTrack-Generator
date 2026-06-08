@@ -70,7 +70,7 @@ class Renderer(private val pack: SamplePack) {
             val buf = FloatArray(totalSamples)
             val cfg = busConfigs.getValue(inst)
             if (inst != "keys" || pack.hasPiano) {
-                val human = Humanizer(recipe.seed + inst.hashCode(), humanAmount)
+                val human = Humanizer(recipe.seed + inst.hashCode(), humanAmount * humanScale(inst))
                 val events = when (inst) {
                     "drums" -> DrumsGenerator(recipe, timing, human).generate(bars)
                     "bass" -> BassGenerator(recipe, timing, human).generate(bars)
@@ -85,6 +85,11 @@ class Renderer(private val pack: SamplePack) {
                     mixEventMono(buf, ev, entry, bodyStart, cfg.gain, gate)
                 }
             }
+            // Per-instrument EQ to carve a clean place in the mix (bass owns the
+            // low end, guitar/keys are high-passed out of its way, cymbals get air).
+            applyEq(buf, inst)
+            // Gentle bus compression on drums for punch and glue.
+            if (inst == "drums") compress(buf, threshold = 0.45f, ratio = 3f, makeup = 1.18f)
             // Light room reverb for glue (skipped in QUICK mode for speed).
             if (recipe.quality == GenerationQuality.BEST) {
                 applyReverb(buf, reverbWet[inst] ?: 0f)
@@ -244,6 +249,110 @@ class Renderer(private val pack: SamplePack) {
         if (factor == 1f) return
         for (buf in stems.values) for (i in buf.indices) buf[i] *= factor
         for (i in countIn.indices) countIn[i] *= factor
+    }
+
+    /** Per-instrument micro-timing/velocity looseness (drums tightest). */
+    private fun humanScale(inst: String): Float = when (inst) {
+        "drums" -> 0.6f
+        "bass" -> 0.85f
+        "guitar" -> 1.0f
+        "keys" -> 1.0f
+        else -> 1.0f
+    }
+
+    // ---- EQ -----------------------------------------------------------------
+
+    /** One biquad section (Robert Bristow-Johnson cookbook coefficients). */
+    private class Biquad(
+        val b0: Float, val b1: Float, val b2: Float, val a1: Float, val a2: Float,
+    ) {
+        private var x1 = 0f; private var x2 = 0f; private var y1 = 0f; private var y2 = 0f
+        fun process(buf: FloatArray) {
+            for (i in buf.indices) {
+                val x0 = buf[i]
+                val y0 = b0 * x0 + b1 * x1 + b2 * x2 - a1 * y1 - a2 * y2
+                x2 = x1; x1 = x0; y2 = y1; y1 = y0
+                buf[i] = y0
+            }
+        }
+        companion object {
+            private val SR = SAMPLE_RATE.toDouble()
+            fun highPass(freq: Double, q: Double = 0.707): Biquad {
+                val w0 = 2 * Math.PI * freq / SR
+                val cw = Math.cos(w0); val a = Math.sin(w0) / (2 * q)
+                val b0 = (1 + cw) / 2; val b1 = -(1 + cw); val b2 = (1 + cw) / 2
+                val a0 = 1 + a; val a1 = -2 * cw; val a2 = 1 - a
+                return Biquad((b0 / a0).toFloat(), (b1 / a0).toFloat(), (b2 / a0).toFloat(), (a1 / a0).toFloat(), (a2 / a0).toFloat())
+            }
+            fun lowPass(freq: Double, q: Double = 0.707): Biquad {
+                val w0 = 2 * Math.PI * freq / SR
+                val cw = Math.cos(w0); val a = Math.sin(w0) / (2 * q)
+                val b0 = (1 - cw) / 2; val b1 = 1 - cw; val b2 = (1 - cw) / 2
+                val a0 = 1 + a; val a1 = -2 * cw; val a2 = 1 - a
+                return Biquad((b0 / a0).toFloat(), (b1 / a0).toFloat(), (b2 / a0).toFloat(), (a1 / a0).toFloat(), (a2 / a0).toFloat())
+            }
+            fun peaking(freq: Double, q: Double, gainDb: Double): Biquad {
+                val A = Math.pow(10.0, gainDb / 40.0)
+                val w0 = 2 * Math.PI * freq / SR
+                val cw = Math.cos(w0); val a = Math.sin(w0) / (2 * q)
+                val b0 = 1 + a * A; val b1 = -2 * cw; val b2 = 1 - a * A
+                val a0 = 1 + a / A; val a1 = -2 * cw; val a2 = 1 - a / A
+                return Biquad((b0 / a0).toFloat(), (b1 / a0).toFloat(), (b2 / a0).toFloat(), (a1 / a0).toFloat(), (a2 / a0).toFloat())
+            }
+            fun highShelf(freq: Double, gainDb: Double): Biquad {
+                val A = Math.pow(10.0, gainDb / 40.0)
+                val w0 = 2 * Math.PI * freq / SR
+                val cw = Math.cos(w0); val s = Math.sin(w0)
+                val beta = Math.sqrt(A) / 0.707
+                val b0 = A * ((A + 1) + (A - 1) * cw + beta * s)
+                val b1 = -2 * A * ((A - 1) + (A + 1) * cw)
+                val b2 = A * ((A + 1) + (A - 1) * cw - beta * s)
+                val a0 = (A + 1) - (A - 1) * cw + beta * s
+                val a1 = 2 * ((A - 1) - (A + 1) * cw)
+                val a2 = (A + 1) - (A - 1) * cw - beta * s
+                return Biquad((b0 / a0).toFloat(), (b1 / a0).toFloat(), (b2 / a0).toFloat(), (a1 / a0).toFloat(), (a2 / a0).toFloat())
+            }
+        }
+    }
+
+    /** Apply the per-instrument EQ chain in place. */
+    private fun applyEq(buf: FloatArray, inst: String) {
+        val chain = when (inst) {
+            "bass" -> listOf(Biquad.highPass(35.0), Biquad.lowPass(5000.0))
+            "drums" -> listOf(Biquad.highPass(45.0), Biquad.highShelf(6500.0, 2.5))
+            "guitar" -> listOf(Biquad.highPass(110.0), Biquad.peaking(2500.0, 0.9, 2.0), Biquad.lowPass(7500.0))
+            "keys" -> listOf(Biquad.highPass(140.0), Biquad.peaking(400.0, 1.0, -2.0), Biquad.lowPass(8500.0))
+            else -> emptyList()
+        }
+        for (stage in chain) stage.process(buf)
+    }
+
+    /**
+     * In-place feed-forward peak compressor with attack/release smoothing.
+     * Adds punch/glue to a bus without obvious pumping.
+     */
+    private fun compress(
+        buf: FloatArray,
+        threshold: Float,
+        ratio: Float,
+        attackMs: Float = 5f,
+        releaseMs: Float = 80f,
+        makeup: Float = 1f,
+    ) {
+        val atk = Math.exp(-1.0 / (SAMPLE_RATE * attackMs / 1000.0)).toFloat()
+        val rel = Math.exp(-1.0 / (SAMPLE_RATE * releaseMs / 1000.0)).toFloat()
+        var env = 0f
+        for (i in buf.indices) {
+            val x = kotlin.math.abs(buf[i])
+            env = if (x > env) atk * env + (1 - atk) * x else rel * env + (1 - rel) * x
+            var gain = 1f
+            if (env > threshold) {
+                val over = env / threshold
+                val compressed = threshold * Math.pow(over.toDouble(), (1.0 / ratio) - 1.0).toFloat()
+                gain = compressed / env
+            }
+            buf[i] = buf[i] * gain * makeup
+        }
     }
 
     /**

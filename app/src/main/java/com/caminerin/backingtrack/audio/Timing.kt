@@ -22,11 +22,22 @@ class Timing(val bpm: Int, val beatsPerBar: Int, val feel: Feel) {
     /** True when eighth notes should be played with a triplet/shuffle swing. */
     val isSwung: Boolean = feel == Feel.SHUFFLE || feel == Feel.SWING || feel == Feel.TWELVE_EIGHT
 
-    /** Swing ratio for the off-beat (the 'and' of each beat). */
+    /**
+     * How "slow" the tempo is, 0 (fast, >=140 bpm) .. 1 (slow, <=60 bpm).
+     * Generators use this to add subdivisions/ornaments at slow tempos and play
+     * sparser at fast tempos, so the groove adapts to the tempo instead of being
+     * the same pattern just sped up.
+     */
+    val slowness: Float = ((140f - bpm) / 80f).coerceIn(0f, 1f)
+
+    /**
+     * Swing ratio for the off-beat (the 'and' of each beat). Shuffle/12-8 are a
+     * hard triplet; jazz swing eases toward straight as the tempo climbs.
+     */
     private val swingRatio: Double = when (feel) {
         Feel.SHUFFLE -> 0.667   // triplet feel
-        Feel.SWING -> 0.62
         Feel.TWELVE_EIGHT -> 0.667
+        Feel.SWING -> (0.667 - ((bpm - 110).coerceIn(-40, 80)) * 0.0010).coerceIn(0.56, 0.667)
         else -> 0.5             // straight
     }
 
@@ -46,10 +57,11 @@ class Timing(val bpm: Int, val beatsPerBar: Int, val feel: Feel) {
      * up-beat ('and') becomes the last triplet; when straight it sits exactly
      * halfway. [beat] is the integer beat, [up] selects the off-beat.
      */
-    fun eighth(barIndex: Int, beat: Int, up: Boolean): Int =
-        if (!up) barIndex * samplesPerBar + beat * samplesPerBeat
-        else if (isSwung) trip(barIndex, beat, 2)
-        else barIndex * samplesPerBar + beat * samplesPerBeat + samplesPerBeat / 2
+    fun eighth(barIndex: Int, beat: Int, up: Boolean): Int {
+        val base = barIndex * samplesPerBar + beat * samplesPerBeat
+        return if (!up) base
+        else base + (swingRatio * samplesPerBeat).toInt()
+    }
 
     /** Absolute sample for a position given in beats (swung eighths). Legacy. */
     fun swung(barIndex: Int, beat: Double): Int {

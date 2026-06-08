@@ -23,7 +23,7 @@ class BassGenerator(
     private val humanizer: Humanizer,
 ) {
     private val rng = Random(recipe.seed xor 0x42415353)
-    private val variant = rng.nextInt(0, 3)
+    private val variant = rng.nextInt(0, 4)
     private val swung = timing.isSwung
 
     fun generate(bars: List<Conductor.BarPlan>): List<RenderEvent> {
@@ -67,6 +67,13 @@ class BassGenerator(
         val b = bar.index
         val e = bar.energy
 
+        // Intro: lay back on roots so the band can build from there.
+        if (bar.isIntro) {
+            emitAt(out, b, 0.0, root, 0.7f)
+            if (recipe.style != Style.SLOW_BALLAD) emitAt(out, b, 2.0, fifth, 0.58f)
+            return
+        }
+
         // Approach note that leads into the next bar's root (chromatic/scale).
         val approachNote = approach(next, chord.rootSemitone)
 
@@ -77,7 +84,8 @@ class BassGenerator(
                 when (variant) {
                     0 -> { emitAt(out, b, 1.0, third, 0.7f); emitAt(out, b, 2.0, fifth, 0.74f); emitAt(out, b, 3.0, sixth, 0.7f) }
                     1 -> { emitAt(out, b, 1.0, fifth, 0.7f); emitAt(out, b, 2.0, sixth, 0.74f); emitAt(out, b, 3.0, b7, 0.7f) }
-                    else -> { emitAt(out, b, 1.0, fifth, 0.7f); emitAt(out, b, 2.0, root, 0.72f); emitAt(out, b, 3.0, third, 0.7f) }
+                    2 -> { emitAt(out, b, 1.0, fifth, 0.7f); emitAt(out, b, 2.0, root, 0.72f); emitAt(out, b, 3.0, third, 0.7f) }
+                    else -> { emitAt(out, b, 1.0, sixth, 0.7f); emitAt(out, b, 2.0, fifth, 0.72f); emitAt(out, b, 3.0, third, 0.7f) }
                 }
                 // Shuffle skip on the 'and' of 4 leading to the next root.
                 if (bar.isTurnaround) emitAt(out, b, 3.0, approachNote, 0.7f)

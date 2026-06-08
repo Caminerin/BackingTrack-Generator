@@ -63,6 +63,8 @@ class KeysGenerator(
             val chord = bar.chord
             val e = bar.energy
             val b = bar.index
+            // Lay out during the intro so the opening has space.
+            if (bar.isIntro) continue
             when (recipe.style) {
                 Style.FUNK -> {
                     for (h in listOf(0.0, 1.5, 2.5, 3.5)) {

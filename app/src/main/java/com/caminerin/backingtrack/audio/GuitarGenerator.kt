@@ -21,7 +21,7 @@ class GuitarGenerator(
     private val humanizer: Humanizer,
 ) {
     private val rng = Random(recipe.seed xor 0x47545253)
-    private val variant = rng.nextInt(0, 3)
+    private val variant = rng.nextInt(0, 4)
     private val strumSpread = (SAMPLE_RATE * 0.012).toInt() // 12 ms across the voicing
 
     fun generate(bars: List<Conductor.BarPlan>): List<RenderEvent> {
@@ -77,6 +77,11 @@ class GuitarGenerator(
         val chord = bar.chord
         val e = bar.energy
         val b = bar.index
+        // Intro: a single soft chord on the downbeat, leaving lots of air.
+        if (bar.isIntro) {
+            strumAbs(out, timing.at(b, 0.0), chord, 0.34f, up = false)
+            return
+        }
         when (recipe.style) {
             Style.BLUES, Style.BLUES_ROCK -> {
                 when (variant) {
@@ -92,6 +97,11 @@ class GuitarGenerator(
                             if (beat == 0 || beat == 2) chop(out, b, beat, false, chord, 0.46f + 0.08f * e)
                             chop(out, b, beat, true, chord, 0.36f)
                         }
+                    }
+                    3 -> {
+                        // Long pad: one chord per bar (+ a push into 3) — maximum air.
+                        chop(out, b, 0, false, chord, 0.5f + 0.1f * e)
+                        if (e > 0.55f) chop(out, b, 2, true, chord, 0.34f)
                     }
                     else -> {
                         // Backbeat comp on 2 & 4 with a soft pickup — classic and spacious.

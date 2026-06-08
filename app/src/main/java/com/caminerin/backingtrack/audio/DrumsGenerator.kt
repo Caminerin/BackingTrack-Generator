@@ -26,24 +26,40 @@ class DrumsGenerator(
     private val rng = Random(recipe.seed xor 0x44524D53)
     // Seed-derived groove variant so the "random" button changes the feel,
     // not just the micro-timing.
-    private val variant = rng.nextInt(0, 3)
+    private val variant = rng.nextInt(0, 4)
     private val swung = timing.isSwung
     private val halfTime = recipe.feel == Feel.HALF_TIME
+    // 0 (fast) .. 1 (slow): drives extra subdivisions/ornaments at slow tempos.
+    private val dense = timing.slowness
 
     fun generate(bars: List<Conductor.BarPlan>): List<RenderEvent> {
         val out = ArrayList<RenderEvent>(bars.size * 20)
         for (bar in bars) {
-            if (bar.isFill && rng.nextFloat() < 0.8f) {
-                addFill(out, bar)
-            } else {
-                addGroove(out, bar)
+            when {
+                bar.isIntro -> introGroove(out, bar)
+                bar.isFill && rng.nextFloat() < 0.85f -> addFill(out, bar)
+                else -> addGroove(out, bar)
             }
             // Crash to mark the top of every new cycle (after the turnaround fill).
-            if (bar.barInCycle == 0 && bar.index > 0) {
+            if (bar.barInCycle == 0 && bar.index > 0 && !bar.isIntro) {
                 hitAbs(out, timing.at(bar.index, 0.0), "crash", 0.7f)
             }
+            // Final downbeat accent to close the song.
+            if (bar.isLastBar) hitAbs(out, timing.at(bar.index, 0.0), "crash", 0.8f)
         }
         return out
+    }
+
+    /** Stripped-back opening: soft ride/hat + backbeat, no ghost notes. */
+    private fun introGroove(out: MutableList<RenderEvent>, bar: Conductor.BarPlan) {
+        val b = bar.index
+        val cym = if (recipe.style == Style.BLUES || recipe.style == Style.SLOW_BALLAD) "ride" else "hh_closed"
+        for (beat in 0 until 4) {
+            hitAbs(out, timing.trip(b, beat, 0), cym, 0.34f)
+            if (swung) hitAbs(out, timing.trip(b, beat, 2), cym, 0.24f)
+        }
+        hitAbs(out, timing.at(b, 0.0), "kick", 0.6f)
+        backbeat(out, b, 0.55f)
     }
 
     /** Emit a hit at an absolute sample position. */
@@ -93,8 +109,17 @@ class DrumsGenerator(
                 hitAbs(out, timing.trip(b, 1, 1), "snare", 0.14f)
                 hitAbs(out, timing.trip(b, 3, 1), "snare", 0.16f)
             }
+            3 -> { // double-shuffle: kick on the 3rd triplet of 1 & 3
+                hitAbs(out, timing.trip(b, 0, 2), "kick", 0.45f)
+                hitAbs(out, timing.trip(b, 2, 2), "kick", 0.45f)
+                hitAbs(out, timing.trip(b, 1, 1), "snare", 0.13f)
+            }
         }
         if (e > 0.6f) hitAbs(out, timing.trip(b, 1, 1), "snare", 0.12f)
+        // Slow blues breathes with ghost snares on every middle triplet.
+        if (dense > 0.5f) {
+            for (beat in 0 until 4) hitAbs(out, timing.trip(b, beat, 1), "snare", 0.10f + 0.04f * dense)
+        }
     }
 
     // --- Texas shuffle: driving hi-hat shuffle, strong backbeat -------------
@@ -107,6 +132,7 @@ class DrumsGenerator(
         hitAbs(out, timing.trip(b, 0, 0), "kick", 0.9f)
         hitAbs(out, timing.trip(b, 2, 0), "kick", 0.78f)
         if (variant != 1) hitAbs(out, timing.trip(b, 2, 2), "kick", 0.5f)
+        if (variant == 3) { hitAbs(out, timing.trip(b, 1, 0), "kick", 0.55f); hitAbs(out, timing.trip(b, 3, 0), "kick", 0.55f) }
         backbeat(out, b, 0.85f)
         // Snare shuffle pickups for drive on busier variants.
         if (variant == 2 || e > 0.65f) {
@@ -121,20 +147,31 @@ class DrumsGenerator(
             straightEighth(out, b, beat, up = false, "hh_closed", 0.55f + 0.1f * e + if (beat == 0) 0.06f else 0f)
             straightEighth(out, b, beat, up = true, "hh_closed", 0.4f)
         }
+        // Slow rock fills the gaps with 16th-note hats (double-time feel).
+        if (dense > 0.55f) {
+            for (beat in 0 until 4) {
+                hitAbs(out, timing.at(b, beat + 0.25), "hh_closed", 0.22f)
+                hitAbs(out, timing.at(b, beat + 0.75), "hh_closed", 0.22f)
+            }
+        }
         hitAbs(out, timing.at(b, 0.0), "kick", 0.88f)
         when (variant) {
             0 -> { hitAbs(out, timing.at(b, 1.5), "kick", 0.62f); hitAbs(out, timing.at(b, 2.0), "kick", 0.7f) }
             1 -> { hitAbs(out, timing.at(b, 2.0), "kick", 0.72f); if (e > 0.55f) hitAbs(out, timing.at(b, 3.5), "kick", 0.55f) }
-            else -> { hitAbs(out, timing.at(b, 1.5), "kick", 0.6f); hitAbs(out, timing.at(b, 2.5), "kick", 0.58f) }
+            2 -> { hitAbs(out, timing.at(b, 1.5), "kick", 0.6f); hitAbs(out, timing.at(b, 2.5), "kick", 0.58f) }
+            else -> { hitAbs(out, timing.at(b, 2.0), "kick", 0.7f); hitAbs(out, timing.at(b, 3.0), "kick", 0.55f) }
         }
         backbeat(out, b, 0.85f)
     }
 
     // --- Funk: sixteenth hats with accents, syncopated kick, ghosts ---------
     private fun funkGroove(out: MutableList<RenderEvent>, b: Int, e: Float) {
-        for (i in 0 until 16) {
-            val pos = i * 0.25
-            val accent = i % 4 == 0
+        // At fast tempos 16th hats get frantic — drop to eighths to stay tight.
+        val steps = if (dense < 0.2f) 8 else 16
+        val stepBeat = 4.0 / steps
+        for (i in 0 until steps) {
+            val pos = i * stepBeat
+            val accent = (i * (16 / steps)) % 4 == 0
             hitAbs(out, timing.at(b, pos), "hh_closed", if (accent) 0.5f + 0.08f * e else 0.26f)
         }
         hitAbs(out, timing.at(b, 0.0), "kick", 0.88f)
@@ -142,6 +179,7 @@ class DrumsGenerator(
         hitAbs(out, timing.at(b, 2.5), "kick", 0.72f)
         if (variant == 1) hitAbs(out, timing.at(b, 1.75), "kick", 0.55f)
         if (variant == 2) hitAbs(out, timing.at(b, 3.25), "kick", 0.5f)
+        if (variant == 3) { hitAbs(out, timing.at(b, 1.5), "kick", 0.55f); hitAbs(out, timing.at(b, 3.5), "kick", 0.52f) }
         backbeat(out, b, 0.82f)
         // Ghost snares — the funk syncopation.
         if (e > 0.4f) {
@@ -163,6 +201,7 @@ class DrumsGenerator(
         }
         hitAbs(out, timing.at(b, 0.0), "kick", 0.7f)
         if (variant != 2) hitAbs(out, timing.at(b, 2.0), "kick", 0.58f)
+        if (variant == 3) hitAbs(out, timing.trip(b, 3, 2), "kick", 0.45f)
         backbeat(out, b, 0.62f)
     }
 
