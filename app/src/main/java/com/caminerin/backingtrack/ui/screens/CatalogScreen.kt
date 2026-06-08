@@ -3,7 +3,6 @@ package com.caminerin.backingtrack.ui.screens
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -11,7 +10,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
@@ -79,6 +77,9 @@ private val BPM_BUCKETS = listOf(
 
 private fun bucketOf(bpm: Int): BpmBucket = BPM_BUCKETS.first { bpm in it.min..it.max }
 
+private val SIG_ORDER = listOf("4/4", "3/4", "6/8", "2/4")
+private val FEEL_ORDER = listOf("Straight", "Swing")
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CatalogScreen(vm: MainViewModel, nav: NavController) {
@@ -91,6 +92,8 @@ fun CatalogScreen(vm: MainViewModel, nav: NavController) {
     val selStyles = remember { mutableStateListOf<String>() }
     val selKeys = remember { mutableStateListOf<String>() }
     val selBpm = remember { mutableStateListOf<String>() }
+    val selSig = remember { mutableStateListOf<String>() }
+    val selFeel = remember { mutableStateListOf<String>() }
 
     val allTracks = remember { vm.styles.flatMap { it.tracks } }
     val styleNames = remember { vm.styles.map { it.name } }
@@ -98,9 +101,16 @@ fun CatalogScreen(vm: MainViewModel, nav: NavController) {
     val bpmOptions = remember {
         BPM_BUCKETS.filter { b -> allTracks.any { it.bpm in b.min..b.max } }.map { it.label }
     }
+    val sigOptions = remember {
+        SIG_ORDER.filter { sig -> allTracks.any { it.timeSignature == sig } }
+    }
+    val feelOptions = remember {
+        FEEL_ORDER.filter { f -> allTracks.any { it.feel == f } }
+    }
 
     val favTracks = vm.styles.flatMap { it.tracks }.filter { favorites.contains(it.id) }
-    val anyFilter = selStyles.isNotEmpty() || selKeys.isNotEmpty() || selBpm.isNotEmpty()
+    val anyFilter = selStyles.isNotEmpty() || selKeys.isNotEmpty() || selBpm.isNotEmpty() ||
+        selSig.isNotEmpty() || selFeel.isNotEmpty()
 
     val sections: List<Style> =
         if (!anyFilter) {
@@ -113,7 +123,9 @@ fun CatalogScreen(vm: MainViewModel, nav: NavController) {
                 if (selStyles.isNotEmpty() && !selStyles.contains(s.name)) return@mapNotNull null
                 val matched = s.tracks.filter { t ->
                     (selKeys.isEmpty() || selKeys.contains(t.key)) &&
-                        (selBpm.isEmpty() || selBpm.contains(bucketOf(t.bpm).label))
+                        (selBpm.isEmpty() || selBpm.contains(bucketOf(t.bpm).label)) &&
+                        (selSig.isEmpty() || selSig.contains(t.timeSignature)) &&
+                        (selFeel.isEmpty() || selFeel.contains(t.feel))
                 }
                 if (matched.isEmpty()) null else s.copy(tracks = matched)
             }
@@ -135,11 +147,16 @@ fun CatalogScreen(vm: MainViewModel, nav: NavController) {
                 styleNames = styleNames,
                 keyOptions = keyOptions,
                 bpmOptions = bpmOptions,
+                sigOptions = sigOptions,
+                feelOptions = feelOptions,
                 selStyles = selStyles,
                 selKeys = selKeys,
                 selBpm = selBpm,
+                selSig = selSig,
+                selFeel = selFeel,
                 onClear = {
                     selStyles.clear(); selKeys.clear(); selBpm.clear()
+                    selSig.clear(); selFeel.clear()
                 },
             )
 
@@ -212,13 +229,18 @@ private fun FilterPanel(
     styleNames: List<String>,
     keyOptions: List<String>,
     bpmOptions: List<String>,
+    sigOptions: List<String>,
+    feelOptions: List<String>,
     selStyles: MutableList<String>,
     selKeys: MutableList<String>,
     selBpm: MutableList<String>,
+    selSig: MutableList<String>,
+    selFeel: MutableList<String>,
     onClear: () -> Unit,
 ) {
-    val anyFilter = selStyles.isNotEmpty() || selKeys.isNotEmpty() || selBpm.isNotEmpty()
-    val activeCount = selStyles.size + selKeys.size + selBpm.size
+    val anyFilter = selStyles.isNotEmpty() || selKeys.isNotEmpty() || selBpm.isNotEmpty() ||
+        selSig.isNotEmpty() || selFeel.isNotEmpty()
+    val activeCount = selStyles.size + selKeys.size + selBpm.size + selSig.size + selFeel.size
     var open by remember { mutableStateOf(false) }
     Column(Modifier.fillMaxWidth().padding(top = 6.dp, bottom = 4.dp)) {
         Row(
@@ -243,34 +265,42 @@ private fun FilterPanel(
             Icon(if (open) Icons.Default.ExpandLess else Icons.Default.ExpandMore, null)
         }
         if (open) {
-            ChipRow("Estilo", styleNames, selStyles)
-            ChipRow("Tonalidad", keyOptions, selKeys)
-            ChipRow("BPM", bpmOptions, selBpm)
+            ChipGrid("Estilo", styleNames, selStyles)
+            ChipGrid("Tonalidad", keyOptions, selKeys)
+            ChipGrid("BPM", bpmOptions, selBpm)
+            ChipGrid("Compás", sigOptions, selSig)
+            ChipGrid("Feel", feelOptions, selFeel)
         }
     }
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-private fun ChipRow(label: String, options: List<String>, selected: MutableList<String>) {
+private fun ChipGrid(label: String, options: List<String>, selected: MutableList<String>) {
+    if (options.isEmpty()) return
     Text(
         label,
         style = MaterialTheme.typography.labelMedium,
         color = MaterialTheme.colorScheme.onSurfaceVariant,
-        modifier = Modifier.padding(start = 16.dp, top = 6.dp),
+        modifier = Modifier.padding(start = 16.dp, top = 8.dp, bottom = 2.dp),
     )
-    LazyRow(
-        modifier = Modifier.fillMaxWidth(),
-        contentPadding = PaddingValues(horizontal = 12.dp, vertical = 4.dp),
-        horizontalArrangement = Arrangement.spacedBy(8.dp),
+    Column(
+        Modifier.fillMaxWidth().padding(horizontal = 12.dp),
+        verticalArrangement = Arrangement.spacedBy(8.dp),
     ) {
-        items(options, key = { "${label}_$it" }) { opt ->
-            val isSel = selected.contains(opt)
-            FilterChip(
-                selected = isSel,
-                onClick = { if (isSel) selected.remove(opt) else selected.add(opt) },
-                label = { Text(opt) },
-            )
+        options.chunked(2).forEach { rowOpts ->
+            Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                rowOpts.forEach { opt ->
+                    val isSel = selected.contains(opt)
+                    FilterChip(
+                        selected = isSel,
+                        onClick = { if (isSel) selected.remove(opt) else selected.add(opt) },
+                        label = { Text(opt) },
+                        modifier = Modifier.weight(1f),
+                    )
+                }
+                if (rowOpts.size == 1) Spacer(Modifier.weight(1f))
+            }
         }
     }
 }
@@ -324,7 +354,8 @@ private fun TrackRow(
             Column(Modifier.weight(1f)) {
                 Text(track.title, fontWeight = FontWeight.SemiBold)
                 Text(
-                    "${track.styleName} • ${track.key} • ${track.bpm} BPM",
+                    "${track.styleName} • ${track.key} • ${track.bpm} BPM • " +
+                        "${track.timeSignature} • ${track.feel}",
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )

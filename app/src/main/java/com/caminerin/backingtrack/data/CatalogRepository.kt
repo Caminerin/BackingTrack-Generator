@@ -42,6 +42,8 @@ object CatalogRepository {
                         key = to.getString("key"),
                         bpm = to.getInt("bpm"),
                         durationSec = to.getInt("durationSec"),
+                        timeSignature = to.optString("timeSignature", "4/4"),
+                        feel = to.optString("feel", "Straight"),
                         stems = stems,
                         free = to.optBoolean("free", t < 2),
                     )

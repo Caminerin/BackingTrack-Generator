@@ -22,6 +22,8 @@ data class Track(
     val key: String,
     val bpm: Int,
     val durationSec: Int,
+    val timeSignature: String,
+    val feel: String,
     val stems: List<Stem>,
     val free: Boolean,
 )
