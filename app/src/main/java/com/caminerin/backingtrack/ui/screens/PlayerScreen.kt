@@ -1,237 +1,240 @@
 package com.caminerin.backingtrack.ui.screens
 
-import android.content.Intent
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.lazy.LazyRow
-import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.filled.Casino
+import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.filled.Lock
 import androidx.compose.material.icons.filled.Loop
 import androidx.compose.material.icons.filled.Pause
 import androidx.compose.material.icons.filled.PlayArrow
-import androidx.compose.material.icons.filled.Save
-import androidx.compose.material.icons.filled.Share
-import androidx.compose.material3.Button
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilledIconButton
+import androidx.compose.material3.FilterChip
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.IconButtonDefaults
-import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
-import androidx.compose.material3.Switch
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Slider
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
-import androidx.core.content.FileProvider
 import androidx.navigation.NavController
-import com.caminerin.backingtrack.model.NOTE_NAMES
-import com.caminerin.backingtrack.ui.AppViewModel
+import com.caminerin.backingtrack.model.Subdivision
+import com.caminerin.backingtrack.ui.MainViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun PlayerScreen(vm: AppViewModel, nav: NavController) {
-    val recipe by vm.recipe.collectAsState()
-    val isRendering by vm.isRendering.collectAsState()
-    val renderProgress by vm.renderProgress.collectAsState()
-    val hasRendered by vm.hasRendered.collectAsState()
-    val isPlaying by vm.isPlaying.collectAsState()
-    val playHead by vm.playHead.collectAsState()
-    val loop by vm.loop.collectAsState()
-    val context = LocalContext.current
+fun PlayerScreen(vm: MainViewModel, nav: NavController) {
+    val pb by vm.playback.collectAsState()
+    val premium by vm.premium.collectAsState()
+    val track = pb.track
+    var showLock by remember { mutableStateOf(false) }
 
-    val keyName = NOTE_NAMES[recipe.keySemitone % 12]
-
-    Column(Modifier.fillMaxWidth()) {
-        TopAppBar(
-            title = { Text("${recipe.style.displayName} · $keyName") },
-            navigationIcon = {
-                IconButton(onClick = { nav.popBackStack() }) {
-                    Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Atrás")
-                }
-            },
-        )
-
+    Scaffold(
+        topBar = {
+            TopAppBar(
+                title = { Text("Reproductor") },
+                navigationIcon = {
+                    IconButton(onClick = { vm.stopPlayback(); nav.popBackStack() }) {
+                        Icon(Icons.Default.ArrowBack, "Atrás")
+                    }
+                },
+            )
+        }
+    ) { pad ->
+        if (track == null) {
+            Box(Modifier.fillMaxSize().padding(pad), contentAlignment = Alignment.Center) {
+                Text("Sin pista seleccionada")
+            }
+            return@Scaffold
+        }
         Column(
-            Modifier
-                .verticalScroll(rememberScrollState())
-                .padding(horizontal = 20.dp)
-                .weight(1f),
+            Modifier.fillMaxSize().padding(pad).padding(20.dp),
+            horizontalAlignment = Alignment.CenterHorizontally,
         ) {
-            Spacer(Modifier.height(8.dp))
-            Text("${recipe.bpm} BPM · ${recipe.feel.displayName} · ${recipe.durationBars} compases",
-                color = MaterialTheme.colorScheme.onSurfaceVariant, fontSize = 13.sp)
+            Text(track.title, style = MaterialTheme.typography.headlineSmall, fontWeight = FontWeight.Bold)
+            Text(
+                "${track.styleName} • Tono original ${track.key} • ${track.bpm} BPM",
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+            )
+            Spacer(Modifier.height(24.dp))
+
+            // Progress
+            val dur = pb.durationMs.coerceAtLeast(1)
+            val pos = pb.positionMs.coerceIn(0, dur)
+            Slider(
+                value = pos.toFloat() / dur,
+                onValueChange = {},
+                enabled = false,
+                modifier = Modifier.fillMaxWidth(),
+            )
+            Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
+                Text(fmt(pos), style = MaterialTheme.typography.labelMedium)
+                Text(fmt(dur), style = MaterialTheme.typography.labelMedium)
+            }
             Spacer(Modifier.height(16.dp))
 
-            // Chord grid
-            LazyRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                items(recipe.progression) { chord ->
-                    Card(
-                        colors = CardDefaults.cardColors(
-                            containerColor = MaterialTheme.colorScheme.surfaceVariant,
-                        ),
-                    ) {
-                        Box(Modifier.padding(horizontal = 18.dp, vertical = 14.dp)) {
-                            Text(
-                                chord.displayName,
-                                fontWeight = FontWeight.Bold,
-                                fontSize = 18.sp,
-                                color = MaterialTheme.colorScheme.primary,
+            // Transport: play/pause + loop
+            Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(24.dp)) {
+                FilledIconButton(
+                    onClick = { vm.togglePlay() },
+                    modifier = Modifier.size(72.dp),
+                    shape = CircleShape,
+                ) {
+                    Icon(
+                        if (pb.isPlaying) Icons.Default.Pause else Icons.Default.PlayArrow,
+                        if (pb.isPlaying) "Pausa" else "Reproducir",
+                        modifier = Modifier.size(40.dp),
+                    )
+                }
+                IconButton(
+                    onClick = { vm.setLoop(!pb.loop) },
+                    colors = IconButtonDefaults.iconButtonColors(
+                        contentColor = if (pb.loop) MaterialTheme.colorScheme.primary else Color.Gray
+                    ),
+                ) {
+                    Icon(Icons.Default.Loop, "Bucle", modifier = Modifier.size(30.dp))
+                }
+            }
+            Text(
+                if (pb.loop) "Bucle activado" else "Bucle desactivado",
+                style = MaterialTheme.typography.labelSmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+            )
+            Spacer(Modifier.height(20.dp))
+
+            // Metronome
+            Card(Modifier.fillMaxWidth(), colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant)) {
+                Column(Modifier.padding(14.dp)) {
+                    Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
+                        Text("Metrónomo", fontWeight = FontWeight.SemiBold, modifier = Modifier.weight(1f))
+                        OutlinedButton(onClick = { vm.toggleMetronome() }) {
+                            Text(if (pb.metronome) "ON" else "OFF")
+                        }
+                    }
+                    Spacer(Modifier.height(8.dp))
+                    Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                        Subdivision.values().forEach { sub ->
+                            FilterChip(
+                                selected = pb.subdivision == sub,
+                                onClick = { vm.setSubdivision(sub) },
+                                label = { Text(sub.label, style = MaterialTheme.typography.labelSmall) },
                             )
                         }
                     }
                 }
             }
+            Spacer(Modifier.height(16.dp))
 
-            Spacer(Modifier.height(24.dp))
+            // Key (transpose) — paid
+            ControlCard(
+                title = "Tono",
+                value = transposeKey(track.key, pb.semitones) +
+                    (if (pb.semitones != 0) "  (${if (pb.semitones > 0) "+" else ""}${pb.semitones})" else ""),
+                locked = !premium,
+                onMinus = { vm.setSemitones(pb.semitones - 1) },
+                onPlus = { vm.setSemitones(pb.semitones + 1) },
+                onLockedClick = { showLock = true },
+            )
+            Spacer(Modifier.height(12.dp))
 
-            if (isRendering) {
-                Text("Generando… ${(renderProgress * 100).toInt()}%")
-                Spacer(Modifier.height(8.dp))
-                LinearProgressIndicator(
-                    progress = renderProgress,
-                    modifier = Modifier.fillMaxWidth(),
-                )
-            } else {
-                LinearProgressIndicator(
-                    progress = playHead,
-                    modifier = Modifier.fillMaxWidth(),
-                )
-            }
-
-            Spacer(Modifier.height(20.dp))
-
-            // Transport
-            Row(
-                Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.spacedBy(16.dp, Alignment.CenterHorizontally),
-                verticalAlignment = Alignment.CenterVertically,
-            ) {
-                IconButton(onClick = { vm.toggleLoop() }) {
-                    Icon(
-                        Icons.Default.Loop,
-                        contentDescription = "Loop",
-                        tint = if (loop) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant,
-                    )
-                }
-                FilledIconButton(
-                    onClick = { vm.togglePlay() },
-                    enabled = hasRendered && !isRendering,
-                    modifier = Modifier.size(72.dp),
-                ) {
-                    if (isRendering) {
-                        CircularProgressIndicator(
-                            progress = renderProgress.coerceIn(0f, 1f),
-                            modifier = Modifier.size(28.dp),
-                            color = MaterialTheme.colorScheme.onPrimary,
-                        )
-                    } else {
-                        Icon(
-                            if (isPlaying) Icons.Default.Pause else Icons.Default.PlayArrow,
-                            contentDescription = "Play/Pause",
-                            modifier = Modifier.size(36.dp),
-                        )
-                    }
-                }
-                IconButton(onClick = { vm.reseed(); vm.generate() }) {
-                    Icon(Icons.Default.Casino, contentDescription = "Regenerar")
-                }
-            }
-
-            Spacer(Modifier.height(24.dp))
-            Text("Mezclador", fontWeight = FontWeight.SemiBold, color = MaterialTheme.colorScheme.primary)
-            Spacer(Modifier.height(8.dp))
-            MixerRow(vm, recipe, "drums", "Batería")
-            MixerRow(vm, recipe, "bass", "Bajo")
-            MixerRow(vm, recipe, "guitar", "Guitarra")
-            MixerRow(vm, recipe, "keys", "Piano")
-
-            Spacer(Modifier.height(20.dp))
-            Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
-                OutlinedButton(
-                    onClick = { vm.saveCurrentToLibrary("wav") },
-                    enabled = hasRendered,
-                ) {
-                    Icon(Icons.Default.Save, contentDescription = null)
-                    Spacer(Modifier.size(6.dp))
-                    Text("Guardar")
-                }
-                Button(
-                    onClick = {
-                        vm.exportFile("m4a") { file ->
-                            if (file != null) shareFile(context, file)
-                        }
-                    },
-                    enabled = hasRendered,
-                ) {
-                    Icon(Icons.Default.Share, contentDescription = null)
-                    Spacer(Modifier.size(6.dp))
-                    Text("Exportar M4A")
-                }
-            }
-            Spacer(Modifier.height(24.dp))
+            // BPM — paid
+            ControlCard(
+                title = "BPM",
+                value = "${pb.bpm}" + (if (pb.bpm != pb.baseBpm) "  (orig. ${pb.baseBpm})" else ""),
+                locked = !premium,
+                onMinus = { vm.setBpm(pb.bpm - 1) },
+                onPlus = { vm.setBpm(pb.bpm + 1) },
+                onLockedClick = { showLock = true },
+            )
         }
     }
-}
 
-@Composable
-private fun MixerRow(
-    vm: AppViewModel,
-    recipe: com.caminerin.backingtrack.model.JamRecipe,
-    key: String,
-    label: String,
-) {
-    val mix = recipe.instruments[key]
-    val enabled = mix?.enabled == true
-    Row(
-        Modifier
-            .fillMaxWidth()
-            .padding(vertical = 4.dp),
-        verticalAlignment = Alignment.CenterVertically,
-    ) {
-        Switch(checked = enabled, onCheckedChange = { vm.setInstrumentEnabled(key, it) })
-        Spacer(Modifier.size(10.dp))
-        Text(label, Modifier.width(72.dp), fontSize = 14.sp)
-        androidx.compose.material3.Slider(
-            value = mix?.volume ?: 0.75f,
-            onValueChange = { vm.setInstrumentVolume(key, it) },
-            enabled = enabled,
-            modifier = Modifier.weight(1f),
+    if (showLock) {
+        AlertDialog(
+            onDismissRequest = { showLock = false },
+            title = { Text("Función de pago") },
+            text = { Text("Cambiar el Tono y el BPM son funciones de pago. Desbloquéalas para ajustar la pista a tu gusto.") },
+            confirmButton = {
+                TextButton(onClick = { vm.unlockPremiumDemo(); showLock = false }) { Text("Desbloquear (demo)") }
+            },
+            dismissButton = { TextButton(onClick = { showLock = false }) { Text("Cerrar") } },
         )
     }
 }
 
-private fun shareFile(context: android.content.Context, file: java.io.File) {
-    val uri = FileProvider.getUriForFile(context, "${context.packageName}.fileprovider", file)
-    val intent = Intent(Intent.ACTION_SEND).apply {
-        type = "audio/*"
-        putExtra(Intent.EXTRA_STREAM, uri)
-        addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+@Composable
+private fun ControlCard(
+    title: String,
+    value: String,
+    locked: Boolean,
+    onMinus: () -> Unit,
+    onPlus: () -> Unit,
+    onLockedClick: () -> Unit,
+) {
+    Card(Modifier.fillMaxWidth(), colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant)) {
+        Row(Modifier.fillMaxWidth().padding(14.dp), verticalAlignment = Alignment.CenterVertically) {
+            Column(Modifier.weight(1f)) {
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Text(title, fontWeight = FontWeight.SemiBold)
+                    if (locked) {
+                        Spacer(Modifier.size(6.dp))
+                        Icon(Icons.Default.Lock, "De pago", modifier = Modifier.size(16.dp), tint = MaterialTheme.colorScheme.onSurfaceVariant)
+                    }
+                }
+                Text(value, style = MaterialTheme.typography.titleMedium, color = MaterialTheme.colorScheme.primary)
+            }
+            if (locked) {
+                OutlinedButton(onClick = onLockedClick) { Text("Desbloquear") }
+            } else {
+                OutlinedButton(onClick = onMinus) { Text("–") }
+                Spacer(Modifier.size(8.dp))
+                OutlinedButton(onClick = onPlus) { Text("+") }
+            }
+        }
     }
-    context.startActivity(Intent.createChooser(intent, "Compartir backing track"))
+}
+
+private val SHARP = listOf("A", "A#", "B", "C", "C#", "D", "D#", "E", "F", "F#", "G", "G#")
+
+/** Transpose a key name (e.g. "A", "C#", "Dm") by n semitones, keeping minor. */
+fun transposeKey(key: String, n: Int): String {
+    val minor = key.endsWith("m")
+    val root = if (minor) key.dropLast(1) else key
+    val idx = SHARP.indexOf(root)
+    if (idx < 0) return key
+    val ni = ((idx + n) % 12 + 12) % 12
+    return SHARP[ni] + if (minor) "m" else ""
+}
+
+private fun fmt(ms: Int): String {
+    val s = ms / 1000
+    return "%d:%02d".format(s / 60, s % 60)
 }
