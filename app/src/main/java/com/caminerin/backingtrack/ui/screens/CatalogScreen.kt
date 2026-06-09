@@ -79,6 +79,7 @@ private fun bucketOf(bpm: Int): BpmBucket = BPM_BUCKETS.first { bpm in it.min..i
 
 private val SIG_ORDER = listOf("4/4", "3/4", "6/8", "2/4")
 private val FEEL_ORDER = listOf("Straight", "Swing")
+private val SUBSTYLE_ORDER = listOf("Mayor", "Menor")
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -90,6 +91,7 @@ fun CatalogScreen(vm: MainViewModel, nav: NavController) {
     var lockedDialog by remember { mutableStateOf<Track?>(null) }
 
     val selStyles = remember { mutableStateListOf<String>() }
+    val selSub = remember { mutableStateListOf<String>() }
     val selKeys = remember { mutableStateListOf<String>() }
     val selBpm = remember { mutableStateListOf<String>() }
     val selSig = remember { mutableStateListOf<String>() }
@@ -107,10 +109,13 @@ fun CatalogScreen(vm: MainViewModel, nav: NavController) {
     val feelOptions = remember {
         FEEL_ORDER.filter { f -> allTracks.any { it.feel == f } }
     }
+    val subOptions = remember {
+        SUBSTYLE_ORDER.filter { sub -> allTracks.any { it.subStyle == sub } }
+    }
 
     val favTracks = vm.styles.flatMap { it.tracks }.filter { favorites.contains(it.id) }
-    val anyFilter = selStyles.isNotEmpty() || selKeys.isNotEmpty() || selBpm.isNotEmpty() ||
-        selSig.isNotEmpty() || selFeel.isNotEmpty()
+    val anyFilter = selStyles.isNotEmpty() || selSub.isNotEmpty() || selKeys.isNotEmpty() ||
+        selBpm.isNotEmpty() || selSig.isNotEmpty() || selFeel.isNotEmpty()
 
     val sections: List<Style> =
         if (!anyFilter) {
@@ -122,7 +127,8 @@ fun CatalogScreen(vm: MainViewModel, nav: NavController) {
             vm.styles.mapNotNull { s ->
                 if (selStyles.isNotEmpty() && !selStyles.contains(s.name)) return@mapNotNull null
                 val matched = s.tracks.filter { t ->
-                    (selKeys.isEmpty() || selKeys.contains(t.key)) &&
+                    (selSub.isEmpty() || selSub.contains(t.subStyle)) &&
+                        (selKeys.isEmpty() || selKeys.contains(t.key)) &&
                         (selBpm.isEmpty() || selBpm.contains(bucketOf(t.bpm).label)) &&
                         (selSig.isEmpty() || selSig.contains(t.timeSignature)) &&
                         (selFeel.isEmpty() || selFeel.contains(t.feel))
@@ -149,13 +155,15 @@ fun CatalogScreen(vm: MainViewModel, nav: NavController) {
                 bpmOptions = bpmOptions,
                 sigOptions = sigOptions,
                 feelOptions = feelOptions,
+                subOptions = subOptions,
                 selStyles = selStyles,
+                selSub = selSub,
                 selKeys = selKeys,
                 selBpm = selBpm,
                 selSig = selSig,
                 selFeel = selFeel,
                 onClear = {
-                    selStyles.clear(); selKeys.clear(); selBpm.clear()
+                    selStyles.clear(); selSub.clear(); selKeys.clear(); selBpm.clear()
                     selSig.clear(); selFeel.clear()
                 },
             )
@@ -231,16 +239,19 @@ private fun FilterPanel(
     bpmOptions: List<String>,
     sigOptions: List<String>,
     feelOptions: List<String>,
+    subOptions: List<String>,
     selStyles: MutableList<String>,
+    selSub: MutableList<String>,
     selKeys: MutableList<String>,
     selBpm: MutableList<String>,
     selSig: MutableList<String>,
     selFeel: MutableList<String>,
     onClear: () -> Unit,
 ) {
-    val anyFilter = selStyles.isNotEmpty() || selKeys.isNotEmpty() || selBpm.isNotEmpty() ||
-        selSig.isNotEmpty() || selFeel.isNotEmpty()
-    val activeCount = selStyles.size + selKeys.size + selBpm.size + selSig.size + selFeel.size
+    val anyFilter = selStyles.isNotEmpty() || selSub.isNotEmpty() || selKeys.isNotEmpty() ||
+        selBpm.isNotEmpty() || selSig.isNotEmpty() || selFeel.isNotEmpty()
+    val activeCount = selStyles.size + selSub.size + selKeys.size + selBpm.size +
+        selSig.size + selFeel.size
     var open by remember { mutableStateOf(false) }
     Column(Modifier.fillMaxWidth().padding(top = 6.dp, bottom = 4.dp)) {
         Row(
@@ -266,6 +277,7 @@ private fun FilterPanel(
         }
         if (open) {
             ChipGrid("Estilo", styleNames, selStyles)
+            if (subOptions.isNotEmpty()) ChipGrid("Subestilo", subOptions, selSub)
             ChipGrid("Tonalidad", keyOptions, selKeys)
             ChipGrid("BPM", bpmOptions, selBpm)
             ChipGrid("Compás", sigOptions, selSig)
@@ -353,8 +365,11 @@ private fun TrackRow(
         ) {
             Column(Modifier.weight(1f)) {
                 Text(track.title, fontWeight = FontWeight.SemiBold)
+                val styleLabel =
+                    if (track.subStyle.isNotBlank()) "${track.styleName} ${track.subStyle}"
+                    else track.styleName
                 Text(
-                    "${track.styleName} • ${track.key} • ${track.bpm} BPM • " +
+                    "$styleLabel • ${track.key} • ${track.bpm} BPM • " +
                         "${track.timeSignature} • ${track.feel}",
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,

@@ -25,6 +25,7 @@ data class Track(
     val title: String,
     val styleId: String,
     val styleName: String,
+    val subStyle: String,
     val key: String,
     val bpm: Int,
     val durationSec: Int,

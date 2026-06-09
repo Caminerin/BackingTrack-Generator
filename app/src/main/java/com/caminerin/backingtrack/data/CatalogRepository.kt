@@ -48,6 +48,7 @@ object CatalogRepository {
                         title = to.getString("title"),
                         styleId = sid,
                         styleName = sname,
+                        subStyle = to.optString("subStyle", ""),
                         key = to.getString("key"),
                         bpm = to.getInt("bpm"),
                         durationSec = to.getInt("durationSec"),
