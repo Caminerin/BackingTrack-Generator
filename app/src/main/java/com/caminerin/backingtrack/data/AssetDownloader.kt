@@ -22,7 +22,10 @@ import java.net.URL
 object AssetDownloader {
 
     private const val API = "https://api.github.com"
-    private const val TAG = "audio_opus"
+    // GitHub caps a release at 1000 assets, so audio is sharded across these
+    // releases (fill order). The index merges all of them; later shards
+    // override earlier ones if a name somehow repeats.
+    private val TAGS = listOf("audio_opus", "audio_opus2", "audio_opus3")
 
     /** asset name -> (API asset url, public browser_download_url). */
     private class Asset(val apiUrl: String, val browserUrl: String)
@@ -48,31 +51,66 @@ object AssetDownloader {
         conn.setRequestProperty("User-Agent", "BackingTrackApp")
     }
 
-    /** Loads (once) the release asset list. */
+    /** Loads (once) the merged asset list across all shard releases. */
     @Synchronized
     private fun assetIndex(): Map<String, Asset> {
         index?.let { return it }
-        val url = URL("$API/repos/${BuildConfig.ASSET_REPO}/releases/tags/$TAG")
-        val conn = url.openConnection() as HttpURLConnection
-        applyAuth(conn)
-        conn.setRequestProperty("Accept", "application/vnd.github+json")
-        conn.connectTimeout = 20000
-        conn.readTimeout = 20000
+        val map = HashMap<String, Asset>(2048)
+        var anyFound = false
+        for (tag in TAGS) {
+            val relId = releaseIdForTag(tag) ?: continue
+            anyFound = true
+            addAssetsForRelease(relId, map)
+        }
+        if (!anyFound) throw IOException("No se pudo leer ningún release de audio")
+        index = map
+        return map
+    }
+
+    /** Resolves a release id from its tag, or null if the tag does not exist. */
+    private fun releaseIdForTag(tag: String): Long? {
+        val conn = (URL("$API/repos/${BuildConfig.ASSET_REPO}/releases/tags/$tag")
+            .openConnection() as HttpURLConnection).apply {
+            applyAuth(this)
+            setRequestProperty("Accept", "application/vnd.github+json")
+            connectTimeout = 20000
+            readTimeout = 20000
+        }
         try {
-            val code = conn.responseCode
-            if (code != 200) throw IOException("No se pudo leer el release ($TAG): HTTP $code")
+            if (conn.responseCode != 200) return null
             val body = conn.inputStream.bufferedReader().use { it.readText() }
-            val assets = JSONObject(body).getJSONArray("assets")
-            val map = HashMap<String, Asset>(assets.length())
-            for (i in 0 until assets.length()) {
-                val a = assets.getJSONObject(i)
-                map[a.getString("name")] =
-                    Asset(a.getString("url"), a.optString("browser_download_url"))
-            }
-            index = map
-            return map
+            return JSONObject(body).getLong("id")
         } finally {
             conn.disconnect()
+        }
+    }
+
+    /** Pages through a release's assets (100/page) and merges them into [map]. */
+    private fun addAssetsForRelease(relId: Long, map: HashMap<String, Asset>) {
+        var page = 1
+        while (true) {
+            val conn = (URL("$API/repos/${BuildConfig.ASSET_REPO}/releases/$relId/assets?per_page=100&page=$page")
+                .openConnection() as HttpURLConnection).apply {
+                applyAuth(this)
+                setRequestProperty("Accept", "application/vnd.github+json")
+                connectTimeout = 20000
+                readTimeout = 20000
+            }
+            try {
+                if (conn.responseCode != 200) return
+                val body = conn.inputStream.bufferedReader().use { it.readText() }
+                val assets = org.json.JSONArray(body)
+                if (assets.length() == 0) return
+                for (i in 0 until assets.length()) {
+                    val a = assets.getJSONObject(i)
+                    map[a.getString("name")] =
+                        Asset(a.getString("url"), a.optString("browser_download_url"))
+                }
+                if (assets.length() < 100) return
+                page++
+            } finally {
+                conn.disconnect()
+            }
         }
     }
 
