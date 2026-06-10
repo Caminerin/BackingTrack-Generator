@@ -222,6 +222,22 @@ class MainViewModel(app: Application) : AndroidViewModel(app) {
         pushState()
     }
 
+    /** Seeks playback to [ms] (all stems stay in sync). */
+    fun seekTo(ms: Int) {
+        player.seekTo(ms)
+        pushState()
+    }
+
+    /** Restarts the track from the beginning and keeps playing. */
+    fun restart() {
+        player.seekTo(0)
+        if (!player.isPlaying) {
+            player.play()
+            if (_playback.value.metronome && !metronome.isRunning) metronome.start(viewModelScope)
+        }
+        pushState()
+    }
+
     fun setLoop(enabled: Boolean) {
         val st = _playback.value
         if (!enabled) {

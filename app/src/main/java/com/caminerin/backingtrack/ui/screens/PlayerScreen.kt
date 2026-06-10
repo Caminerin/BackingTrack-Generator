@@ -28,6 +28,7 @@ import androidx.compose.material.icons.filled.Lock
 import androidx.compose.material.icons.filled.Loop
 import androidx.compose.material.icons.filled.Pause
 import androidx.compose.material.icons.filled.PlayArrow
+import androidx.compose.material.icons.filled.Replay
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
@@ -154,32 +155,69 @@ fun PlayerScreen(vm: MainViewModel, nav: NavController) {
                     }
                     out
                 }
-                val beatsElapsed = pb.positionMs / 1000.0 * track.bpm / 60.0
-                val curIdx = chart.indexOfLast { it.beat <= beatsElapsed }.let { if (it < 0) 0 else it }
-                val page = curIdx / 6
+                // Band-in-a-Box renders a 2-bar count-in before the band enters,
+                // so the chord chart must not advance during those first 2 bars.
+                val beatsPerBar = remember(track.id) {
+                    track.timeSignature.substringBefore("/").toIntOrNull() ?: 4
+                }
+                val leadInBeats = 2 * beatsPerBar
+                // One chorus length in beats; the progression repeats across the song.
+                val progBeats = remember(track.id) {
+                    track.chords.maxOf { it.beat }.coerceAtLeast(beatsPerBar)
+                }
+                val rawBeats = pb.positionMs / 1000.0 * track.bpm / 60.0
+                val songBeats = rawBeats - leadInBeats
+                val inCountIn = songBeats < 0
+                val curIdx = if (inCountIn) -1 else {
+                    val b = songBeats % progBeats
+                    chart.indexOfLast { it.beat <= b }.let { if (it < 0) 0 else it }
+                }
+                val page = (if (curIdx < 0) 0 else curIdx) / 6
                 val window = chart.drop(page * 6).take(6)
-                ChordGrid(window = window, activeInWindow = curIdx - page * 6)
+                ChordGrid(
+                    window = window,
+                    activeInWindow = if (curIdx < 0) -1 else curIdx - page * 6,
+                )
+                if (inCountIn && pb.isPlaying) {
+                    Spacer(Modifier.height(6.dp))
+                    Text(
+                        "Cuenta de entrada (2 compases)…",
+                        style = MaterialTheme.typography.labelMedium,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    )
+                }
                 Spacer(Modifier.height(16.dp))
             }
             Spacer(Modifier.height(8.dp))
 
-            // Progress
+            // Progress (draggable to seek)
             val dur = pb.durationMs.coerceAtLeast(1)
             val pos = pb.positionMs.coerceIn(0, dur)
+            var dragFrac by remember { mutableStateOf<Float?>(null) }
+            val shownFrac = dragFrac ?: (pos.toFloat() / dur)
             Slider(
-                value = pos.toFloat() / dur,
-                onValueChange = {},
-                enabled = false,
+                value = shownFrac,
+                onValueChange = { dragFrac = it },
+                onValueChangeFinished = {
+                    dragFrac?.let { vm.seekTo((it * dur).toInt()) }
+                    dragFrac = null
+                },
                 modifier = Modifier.fillMaxWidth(),
             )
             Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
-                Text(fmt(pos), style = MaterialTheme.typography.labelMedium)
+                Text(fmt((shownFrac * dur).toInt()), style = MaterialTheme.typography.labelMedium)
                 Text(fmt(dur), style = MaterialTheme.typography.labelMedium)
             }
             Spacer(Modifier.height(16.dp))
 
-            // Transport: play/pause + loop
+            // Transport: restart + play/pause + loop
             Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(24.dp)) {
+                IconButton(
+                    onClick = { vm.restart() },
+                    modifier = Modifier.size(48.dp),
+                ) {
+                    Icon(Icons.Default.Replay, "Empezar de nuevo", modifier = Modifier.size(30.dp))
+                }
                 FilledIconButton(
                     onClick = { vm.togglePlay() },
                     modifier = Modifier.size(72.dp),
