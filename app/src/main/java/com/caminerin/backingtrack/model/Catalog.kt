@@ -61,3 +61,4 @@ data class Style(
 )
 
 const val FAVORITES_ID = "favorites"
+const val FREE_ID = "free"

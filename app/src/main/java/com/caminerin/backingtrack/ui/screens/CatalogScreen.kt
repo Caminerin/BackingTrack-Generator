@@ -1,5 +1,6 @@
 package com.caminerin.backingtrack.ui.screens
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -19,6 +20,7 @@ import androidx.compose.material.icons.filled.ExpandMore
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.FavoriteBorder
 import androidx.compose.material.icons.filled.Lock
+import androidx.compose.material.icons.filled.LockOpen
 import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.filled.Star
@@ -53,6 +55,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.caminerin.backingtrack.model.FAVORITES_ID
+import com.caminerin.backingtrack.model.FREE_ID
 import com.caminerin.backingtrack.model.Quality
 import com.caminerin.backingtrack.model.Style
 import com.caminerin.backingtrack.model.Track
@@ -129,7 +132,12 @@ fun CatalogScreen(vm: MainViewModel, nav: NavController) {
         if (!anyFilter) {
             buildList {
                 if (favTracks.isNotEmpty()) add(Style(FAVORITES_ID, "Favoritos", favTracks))
-                addAll(vm.styles)
+                val freeTracks = vm.styles.flatMap { it.tracks }.filter { it.free }
+                if (freeTracks.isNotEmpty()) add(Style(FREE_ID, "Gratis", freeTracks))
+                vm.styles.forEach { s ->
+                    val paid = s.tracks.filter { !it.free }
+                    if (paid.isNotEmpty()) add(s.copy(tracks = paid))
+                }
             }
         } else {
             vm.styles.mapNotNull { s ->
@@ -140,7 +148,7 @@ fun CatalogScreen(vm: MainViewModel, nav: NavController) {
                         (selBpm.isEmpty() || selBpm.contains(bucketOf(t.bpm).label)) &&
                         (selSig.isEmpty() || selSig.contains(t.timeSignature)) &&
                         (selFeel.isEmpty() || selFeel.contains(t.feel))
-                }
+                }.sortedWith(compareByDescending<Track> { it.free })
                 if (matched.isEmpty()) null else s.copy(tracks = matched)
             }
         }
@@ -192,7 +200,8 @@ fun CatalogScreen(vm: MainViewModel, nav: NavController) {
                     }
                 }
                 sections.forEach { style ->
-                    val isOpen = expanded[style.id] ?: (anyFilter || style.id == FAVORITES_ID)
+                    val isOpen = expanded[style.id]
+                        ?: (anyFilter || style.id == FAVORITES_ID || style.id == FREE_ID)
                     item(key = "h_${style.id}") {
                         StyleHeader(style, isOpen) { expanded[style.id] = !isOpen }
                     }
@@ -203,6 +212,7 @@ fun CatalogScreen(vm: MainViewModel, nav: NavController) {
                                 track = track,
                                 favorite = favorites.contains(track.id),
                                 locked = locked,
+                                premium = premium,
                                 onFavorite = { vm.toggleFavorite(track) },
                                 onClick = {
                                     if (locked) {
@@ -392,6 +402,10 @@ private fun StyleHeader(style: Style, open: Boolean, onToggle: () -> Unit) {
             Icon(Icons.Default.Star, null, tint = MaterialTheme.colorScheme.primary)
             Spacer(Modifier.size(8.dp))
         }
+        if (style.id == FREE_ID) {
+            Icon(Icons.Default.LockOpen, null, tint = FreeGreen)
+            Spacer(Modifier.size(8.dp))
+        }
         Text(
             style.name,
             style = MaterialTheme.typography.titleMedium,
@@ -413,14 +427,19 @@ private fun TrackRow(
     track: Track,
     favorite: Boolean,
     locked: Boolean,
+    premium: Boolean,
     onFavorite: () -> Unit,
     onClick: () -> Unit,
 ) {
+    val container = when {
+        track.free -> FreeGreen.copy(alpha = 0.12f)
+        else -> MaterialTheme.colorScheme.surfaceVariant
+    }
     Card(
         modifier = Modifier.fillMaxWidth().padding(horizontal = 12.dp, vertical = 4.dp)
             .clickable { onClick() },
         shape = RoundedCornerShape(10.dp),
-        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant),
+        colors = CardDefaults.cardColors(containerColor = container),
     ) {
         Row(
             Modifier.fillMaxWidth().padding(horizontal = 14.dp, vertical = 12.dp),
@@ -439,8 +458,13 @@ private fun TrackRow(
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
             }
-            if (locked) {
-                Icon(Icons.Default.Lock, "De pago", tint = MaterialTheme.colorScheme.onSurfaceVariant)
+            when {
+                track.free -> Badge("GRATIS", FreeGreen)
+                locked -> Icon(
+                    Icons.Default.Lock, "De pago",
+                    tint = MaterialTheme.colorScheme.primary,
+                )
+                else -> Badge("Comprada", MaterialTheme.colorScheme.primary)
             }
             IconButton(onClick = onFavorite) {
                 Icon(
@@ -451,4 +475,19 @@ private fun TrackRow(
             }
         }
     }
+}
+
+private val FreeGreen = Color(0xFF2E7D32)
+
+@Composable
+private fun Badge(text: String, color: Color) {
+    Text(
+        text,
+        color = Color.White,
+        style = MaterialTheme.typography.labelSmall,
+        fontWeight = FontWeight.Bold,
+        modifier = Modifier
+            .background(color, RoundedCornerShape(6.dp))
+            .padding(horizontal = 8.dp, vertical = 3.dp),
+    )
 }
