@@ -29,8 +29,10 @@ import androidx.compose.material.icons.filled.Loop
 import androidx.compose.material.icons.filled.Pause
 import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilledIconButton
 import androidx.compose.material3.FilterChip
@@ -67,12 +69,14 @@ import com.caminerin.backingtrack.model.ChordEvent
 import com.caminerin.backingtrack.model.Subdivision
 import com.caminerin.backingtrack.ui.LoopMode
 import com.caminerin.backingtrack.ui.MainViewModel
+import com.caminerin.backingtrack.ui.TrackLoad
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalLayoutApi::class)
 @Composable
 fun PlayerScreen(vm: MainViewModel, nav: NavController) {
     val pb by vm.playback.collectAsState()
     val premium by vm.premium.collectAsState()
+    val loadState by vm.loadState.collectAsState()
     val track = pb.track
     var showLock by remember { mutableStateOf(false) }
     var metroOpen by remember { mutableStateOf(false) }
@@ -92,6 +96,39 @@ fun PlayerScreen(vm: MainViewModel, nav: NavController) {
         if (track == null) {
             Box(Modifier.fillMaxSize().padding(pad), contentAlignment = Alignment.Center) {
                 Text("Sin pista seleccionada")
+            }
+            return@Scaffold
+        }
+        val ls = loadState
+        if (ls is TrackLoad.Downloading || ls is TrackLoad.Error) {
+            Box(Modifier.fillMaxSize().padding(pad).padding(24.dp), contentAlignment = Alignment.Center) {
+                Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                    Text(track.title, style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold)
+                    Spacer(Modifier.height(20.dp))
+                    if (ls is TrackLoad.Downloading) {
+                        CircularProgressIndicator(progress = ls.fraction.coerceIn(0f, 1f))
+                        Spacer(Modifier.height(12.dp))
+                        Text("Descargando pista… ${(ls.fraction * 100).toInt()}%")
+                        Text(
+                            "Se guarda en el móvil; la próxima vez será inmediata.",
+                            style = MaterialTheme.typography.bodySmall,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                            textAlign = TextAlign.Center,
+                        )
+                    } else if (ls is TrackLoad.Error) {
+                        Text("No se pudo descargar la pista", fontWeight = FontWeight.Bold)
+                        Spacer(Modifier.height(6.dp))
+                        Text(
+                            ls.message,
+                            style = MaterialTheme.typography.bodySmall,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                            textAlign = TextAlign.Center,
+                        )
+                        Spacer(Modifier.height(16.dp))
+                        Button(onClick = { vm.retryOpen() }) { Text("Reintentar") }
+                        TextButton(onClick = { nav.popBackStack() }) { Text("Volver") }
+                    }
+                }
             }
             return@Scaffold
         }

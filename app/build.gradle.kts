@@ -22,6 +22,15 @@ android {
         targetSdk = 34
         versionCode = 2
         versionName = "0.2.0"
+
+        // Read-only token used to download audio assets from the (private)
+        // GitHub release. Injected at build time from the Gradle property
+        // `assetToken` or the env var ASSET_READ_TOKEN (set as a CI secret).
+        // Defaults to empty for local builds; never commit a real token.
+        val assetToken = (project.findProperty("assetToken") as String?)
+            ?: System.getenv("ASSET_READ_TOKEN") ?: ""
+        buildConfigField("String", "ASSET_TOKEN", "\"$assetToken\"")
+        buildConfigField("String", "ASSET_REPO", "\"Caminerin/BackingTrack-Generator\"")
     }
 
     buildTypes {
@@ -49,6 +58,7 @@ android {
 
     buildFeatures {
         compose = true
+        buildConfig = true
     }
 
     composeOptions {

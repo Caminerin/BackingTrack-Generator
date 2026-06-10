@@ -42,14 +42,14 @@ class BackingPlayer(private val context: Context) {
 
     val isReady: Boolean get() = allPrepared
 
-    /** [items] = list of (instrument label, asset file name). */
+    /** [items] = list of (instrument label, absolute local file path). */
     fun load(items: List<Pair<String, String>>, bpm: Int) {
         release()
         originalBpm = bpm
         targetBpm = bpm
         semitones = 0
         readyFired = false
-        items.forEachIndexed { index, (instrument, assetName) ->
+        items.forEachIndexed { index, (instrument, path) ->
             val player = MediaPlayer()
             player.setAudioAttributes(
                 AudioAttributes.Builder()
@@ -57,9 +57,7 @@ class BackingPlayer(private val context: Context) {
                     .setContentType(AudioAttributes.CONTENT_TYPE_MUSIC)
                     .build()
             )
-            context.assets.openFd(assetName).use { afd ->
-                player.setDataSource(afd.fileDescriptor, afd.startOffset, afd.length)
-            }
+            player.setDataSource(path)
             val stem = Stem(instrument, player)
             val isMaster = index == 0
             player.setOnPreparedListener {

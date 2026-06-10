@@ -26,9 +26,11 @@ jobs:
         run: chmod +x ./gradlew
 
       - name: Build debug APK
+        env:
+          ASSET_READ_TOKEN: ${{ secrets.ASSET_READ_TOKEN }}
         run: |
           set -o pipefail
-          ./gradlew assembleDebug --stacktrace --console=plain 2>&1 | tee build.log
+          ./gradlew assembleDebug -PassetToken="${ASSET_READ_TOKEN}" --stacktrace --console=plain 2>&1 | tee build.log
 
       - name: Surface build errors
         if: failure()

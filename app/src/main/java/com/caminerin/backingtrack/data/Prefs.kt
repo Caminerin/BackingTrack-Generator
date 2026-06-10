@@ -19,8 +19,14 @@ class Prefs(context: Context) {
         get() = sp.getBoolean(KEY_PREMIUM, false)
         set(value) = sp.edit().putBoolean(KEY_PREMIUM, value).apply()
 
+    /** Download quality tier id ("low" | "std" | "high"); defaults to "std". */
+    var qualityId: String
+        get() = sp.getString(KEY_QUALITY, "std") ?: "std"
+        set(value) = sp.edit().putString(KEY_QUALITY, value).apply()
+
     companion object {
         private const val KEY_FAV = "favorites"
         private const val KEY_PREMIUM = "premium"
+        private const val KEY_QUALITY = "quality"
     }
 }

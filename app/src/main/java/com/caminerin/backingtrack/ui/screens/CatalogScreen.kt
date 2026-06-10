@@ -19,7 +19,10 @@ import androidx.compose.material.icons.filled.ExpandMore
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.FavoriteBorder
 import androidx.compose.material.icons.filled.Lock
+import androidx.compose.material.icons.filled.PlayArrow
+import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.filled.Star
+import androidx.compose.material.icons.filled.Stop
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.AssistChip
 import androidx.compose.material3.Card
@@ -29,6 +32,7 @@ import androidx.compose.material3.FilterChip
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -49,6 +53,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.caminerin.backingtrack.model.FAVORITES_ID
+import com.caminerin.backingtrack.model.Quality
 import com.caminerin.backingtrack.model.Style
 import com.caminerin.backingtrack.model.Track
 import com.caminerin.backingtrack.ui.MainViewModel
@@ -86,9 +91,12 @@ private val SUBSTYLE_ORDER = listOf("Mayor", "Menor")
 fun CatalogScreen(vm: MainViewModel, nav: NavController) {
     val favorites by vm.favorites.collectAsState()
     val premium by vm.premium.collectAsState()
+    val quality by vm.quality.collectAsState()
+    val previewId by vm.previewId.collectAsState()
 
     val expanded = remember { mutableStateMapOf<String, Boolean>() }
     var lockedDialog by remember { mutableStateOf<Track?>(null) }
+    var showQuality by remember { mutableStateOf(false) }
 
     val selStyles = remember { mutableStateListOf<String>() }
     val selSub = remember { mutableStateListOf<String>() }
@@ -145,6 +153,11 @@ fun CatalogScreen(vm: MainViewModel, nav: NavController) {
                     containerColor = MaterialTheme.colorScheme.surface,
                     titleContentColor = MaterialTheme.colorScheme.primary,
                 ),
+                actions = {
+                    IconButton(onClick = { showQuality = true }) {
+                        Icon(Icons.Filled.Settings, contentDescription = "Calidad de descarga")
+                    }
+                },
             )
         }
     ) { pad ->
@@ -208,28 +221,79 @@ fun CatalogScreen(vm: MainViewModel, nav: NavController) {
     }
 
     lockedDialog?.let { track ->
+        val isPreviewing = previewId == track.id
         AlertDialog(
-            onDismissRequest = { lockedDialog = null },
+            onDismissRequest = { vm.stopPreview(); lockedDialog = null },
             title = { Text("Pista de pago") },
             text = {
-                Text(
-                    "\"${track.title}\" pertenece a un paquete de pago del estilo " +
-                        "${track.styleName}. Cómpralo para desbloquear todas sus pistas " +
-                        "y las funciones de Tono y BPM."
-                )
+                Column {
+                    Text(
+                        "\"${track.title}\" es una pista de pago (${track.styleName}). " +
+                            "Escucha la preview de 15 s o desbloquéala (demo) para tocar " +
+                            "la pista completa con todos los instrumentos."
+                    )
+                    Spacer(Modifier.size(12.dp))
+                    TextButton(onClick = {
+                        if (isPreviewing) vm.stopPreview() else vm.playPreview(track)
+                    }) {
+                        Icon(
+                            if (isPreviewing) Icons.Filled.Stop else Icons.Filled.PlayArrow,
+                            contentDescription = null,
+                        )
+                        Spacer(Modifier.size(6.dp))
+                        Text(if (isPreviewing) "Detener preview" else "Escuchar preview (15 s)")
+                    }
+                }
             },
             confirmButton = {
                 TextButton(onClick = {
+                    vm.stopPreview()
                     vm.unlockPremiumDemo()
                     lockedDialog = null
                 }) { Text("Desbloquear (demo)") }
             },
             dismissButton = {
-                TextButton(onClick = { lockedDialog = null }) { Text("Cerrar") }
+                TextButton(onClick = { vm.stopPreview(); lockedDialog = null }) { Text("Cerrar") }
+            },
+        )
+    }
+
+    if (showQuality) {
+        AlertDialog(
+            onDismissRequest = { showQuality = false },
+            title = { Text("Calidad de descarga") },
+            text = {
+                Column {
+                    Text(
+                        "Calidad del audio que se descarga al reproducir. Solo afecta a " +
+                            "las pistas nuevas; las ya descargadas no cambian.",
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    )
+                    Spacer(Modifier.size(8.dp))
+                    Quality.entries.forEach { q ->
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically,
+                            modifier = Modifier.fillMaxWidth().clickable { vm.setQuality(q) },
+                        ) {
+                            RadioButton(selected = quality == q, onClick = { vm.setQuality(q) })
+                            Spacer(Modifier.size(4.dp))
+                            Text(QUALITY_DESC[q.id] ?: q.label)
+                        }
+                    }
+                }
+            },
+            confirmButton = {
+                TextButton(onClick = { showQuality = false }) { Text("Listo") }
             },
         )
     }
 }
+
+private val QUALITY_DESC = mapOf(
+    "low" to "Datos bajos — menor tamaño (Opus 40/64k)",
+    "std" to "Estándar — recomendada (Opus 56/96k)",
+    "high" to "Alta — máxima calidad (Opus 80/128k)",
+)
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
