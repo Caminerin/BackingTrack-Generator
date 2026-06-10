@@ -300,8 +300,8 @@ fun CatalogScreen(vm: MainViewModel, nav: NavController) {
 }
 
 private val QUALITY_DESC = mapOf(
-    "low" to "Datos bajos — menor tamaño (Opus 40/64k)",
-    "std" to "Estándar — recomendada (Opus 56/96k)",
+    "low" to "Datos bajos — por defecto, menor consumo (Opus 40/64k)",
+    "std" to "Estándar (Opus 56/96k)",
     "high" to "Alta — máxima calidad (Opus 80/128k)",
 )
 
