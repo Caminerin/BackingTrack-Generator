@@ -24,9 +24,12 @@ object AssetDownloader {
     private const val API = "https://api.github.com"
     private const val TAG = "audio_opus"
 
-    /** Lazily-loaded map: asset name -> asset API url. */
+    /** asset name -> (API asset url, public browser_download_url). */
+    private class Asset(val apiUrl: String, val browserUrl: String)
+
+    /** Lazily-loaded asset index. */
     @Volatile
-    private var index: Map<String, String>? = null
+    private var index: Map<String, Asset>? = null
 
     private fun audioDir(context: Context): File =
         File(context.filesDir, "audio").apply { mkdirs() }
@@ -45,9 +48,9 @@ object AssetDownloader {
         conn.setRequestProperty("User-Agent", "BackingTrackApp")
     }
 
-    /** Loads (once) the release asset list as name -> asset API url. */
+    /** Loads (once) the release asset list. */
     @Synchronized
-    private fun assetIndex(): Map<String, String> {
+    private fun assetIndex(): Map<String, Asset> {
         index?.let { return it }
         val url = URL("$API/repos/${BuildConfig.ASSET_REPO}/releases/tags/$TAG")
         val conn = url.openConnection() as HttpURLConnection
@@ -60,10 +63,11 @@ object AssetDownloader {
             if (code != 200) throw IOException("No se pudo leer el release ($TAG): HTTP $code")
             val body = conn.inputStream.bufferedReader().use { it.readText() }
             val assets = JSONObject(body).getJSONArray("assets")
-            val map = HashMap<String, String>(assets.length())
+            val map = HashMap<String, Asset>(assets.length())
             for (i in 0 until assets.length()) {
                 val a = assets.getJSONObject(i)
-                map[a.getString("name")] = a.getString("url")
+                map[a.getString("name")] =
+                    Asset(a.getString("url"), a.optString("browser_download_url"))
             }
             index = map
             return map
@@ -84,10 +88,28 @@ object AssetDownloader {
         val target = localFile(context, name)
         if (target.exists() && target.length() > 0) return target
 
-        val assetUrl = assetIndex()[name]
+        val asset = assetIndex()[name]
             ?: throw IOException("Asset no encontrado en el release: $name")
 
-        val conn = (URL(assetUrl).openConnection() as HttpURLConnection).apply {
+        // Public repo (no token): download the browser URL directly, no auth and
+        // no API rate limit. Private repo (token set): use the authenticated API
+        // asset endpoint and follow its 302 to the CDN manually.
+        if (BuildConfig.ASSET_TOKEN.isEmpty() && asset.browserUrl.isNotEmpty()) {
+            val cdn = (URL(asset.browserUrl).openConnection() as HttpURLConnection).apply {
+                setRequestProperty("User-Agent", "BackingTrackApp")
+                connectTimeout = 20000
+                readTimeout = 60000
+            }
+            if (cdn.responseCode !in 200..299) {
+                val c = cdn.responseCode
+                cdn.disconnect()
+                throw IOException("Descarga HTTP $c para $name")
+            }
+            writeStream(cdn.inputStream, target, cdn.contentLengthLong, onProgress) { cdn.disconnect() }
+            return target
+        }
+
+        val conn = (URL(asset.apiUrl).openConnection() as HttpURLConnection).apply {
             applyAuth(this)
             setRequestProperty("Accept", "application/octet-stream")
             instanceFollowRedirects = false
