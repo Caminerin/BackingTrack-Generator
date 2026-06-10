@@ -28,9 +28,12 @@ import androidx.compose.material.icons.filled.Lock
 import androidx.compose.material.icons.filled.Loop
 import androidx.compose.material.icons.filled.Pause
 import androidx.compose.material.icons.filled.PlayArrow
+import androidx.compose.material.icons.filled.Replay
 import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilledIconButton
 import androidx.compose.material3.FilterChip
@@ -67,12 +70,14 @@ import com.caminerin.backingtrack.model.ChordEvent
 import com.caminerin.backingtrack.model.Subdivision
 import com.caminerin.backingtrack.ui.LoopMode
 import com.caminerin.backingtrack.ui.MainViewModel
+import com.caminerin.backingtrack.ui.TrackLoad
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalLayoutApi::class)
 @Composable
 fun PlayerScreen(vm: MainViewModel, nav: NavController) {
     val pb by vm.playback.collectAsState()
     val premium by vm.premium.collectAsState()
+    val loadState by vm.loadState.collectAsState()
     val track = pb.track
     var showLock by remember { mutableStateOf(false) }
     var metroOpen by remember { mutableStateOf(false) }
@@ -92,6 +97,39 @@ fun PlayerScreen(vm: MainViewModel, nav: NavController) {
         if (track == null) {
             Box(Modifier.fillMaxSize().padding(pad), contentAlignment = Alignment.Center) {
                 Text("Sin pista seleccionada")
+            }
+            return@Scaffold
+        }
+        val ls = loadState
+        if (ls is TrackLoad.Downloading || ls is TrackLoad.Error) {
+            Box(Modifier.fillMaxSize().padding(pad).padding(24.dp), contentAlignment = Alignment.Center) {
+                Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                    Text(track.title, style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold)
+                    Spacer(Modifier.height(20.dp))
+                    if (ls is TrackLoad.Downloading) {
+                        CircularProgressIndicator(progress = ls.fraction.coerceIn(0f, 1f))
+                        Spacer(Modifier.height(12.dp))
+                        Text("Descargando pista… ${(ls.fraction * 100).toInt()}%")
+                        Text(
+                            "Se guarda en el móvil; la próxima vez será inmediata.",
+                            style = MaterialTheme.typography.bodySmall,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                            textAlign = TextAlign.Center,
+                        )
+                    } else if (ls is TrackLoad.Error) {
+                        Text("No se pudo descargar la pista", fontWeight = FontWeight.Bold)
+                        Spacer(Modifier.height(6.dp))
+                        Text(
+                            ls.message,
+                            style = MaterialTheme.typography.bodySmall,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                            textAlign = TextAlign.Center,
+                        )
+                        Spacer(Modifier.height(16.dp))
+                        Button(onClick = { vm.retryOpen() }) { Text("Reintentar") }
+                        TextButton(onClick = { nav.popBackStack() }) { Text("Volver") }
+                    }
+                }
             }
             return@Scaffold
         }
@@ -117,32 +155,69 @@ fun PlayerScreen(vm: MainViewModel, nav: NavController) {
                     }
                     out
                 }
-                val beatsElapsed = pb.positionMs / 1000.0 * track.bpm / 60.0
-                val curIdx = chart.indexOfLast { it.beat <= beatsElapsed }.let { if (it < 0) 0 else it }
-                val page = curIdx / 6
+                // Band-in-a-Box renders a 2-bar count-in before the band enters,
+                // so the chord chart must not advance during those first 2 bars.
+                val beatsPerBar = remember(track.id) {
+                    track.timeSignature.substringBefore("/").toIntOrNull() ?: 4
+                }
+                val leadInBeats = 2 * beatsPerBar
+                // One chorus length in beats; the progression repeats across the song.
+                val progBeats = remember(track.id) {
+                    track.chords.maxOf { it.beat }.coerceAtLeast(beatsPerBar)
+                }
+                val rawBeats = pb.positionMs / 1000.0 * track.bpm / 60.0
+                val songBeats = rawBeats - leadInBeats
+                val inCountIn = songBeats < 0
+                val curIdx = if (inCountIn) -1 else {
+                    val b = songBeats % progBeats
+                    chart.indexOfLast { it.beat <= b }.let { if (it < 0) 0 else it }
+                }
+                val page = (if (curIdx < 0) 0 else curIdx) / 6
                 val window = chart.drop(page * 6).take(6)
-                ChordGrid(window = window, activeInWindow = curIdx - page * 6)
+                ChordGrid(
+                    window = window,
+                    activeInWindow = if (curIdx < 0) -1 else curIdx - page * 6,
+                )
+                if (inCountIn && pb.isPlaying) {
+                    Spacer(Modifier.height(6.dp))
+                    Text(
+                        "Cuenta de entrada (2 compases)…",
+                        style = MaterialTheme.typography.labelMedium,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    )
+                }
                 Spacer(Modifier.height(16.dp))
             }
             Spacer(Modifier.height(8.dp))
 
-            // Progress
+            // Progress (draggable to seek)
             val dur = pb.durationMs.coerceAtLeast(1)
             val pos = pb.positionMs.coerceIn(0, dur)
+            var dragFrac by remember { mutableStateOf<Float?>(null) }
+            val shownFrac = dragFrac ?: (pos.toFloat() / dur)
             Slider(
-                value = pos.toFloat() / dur,
-                onValueChange = {},
-                enabled = false,
+                value = shownFrac,
+                onValueChange = { dragFrac = it },
+                onValueChangeFinished = {
+                    dragFrac?.let { vm.seekTo((it * dur).toInt()) }
+                    dragFrac = null
+                },
                 modifier = Modifier.fillMaxWidth(),
             )
             Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
-                Text(fmt(pos), style = MaterialTheme.typography.labelMedium)
+                Text(fmt((shownFrac * dur).toInt()), style = MaterialTheme.typography.labelMedium)
                 Text(fmt(dur), style = MaterialTheme.typography.labelMedium)
             }
             Spacer(Modifier.height(16.dp))
 
-            // Transport: play/pause + loop
+            // Transport: restart + play/pause + loop
             Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(24.dp)) {
+                IconButton(
+                    onClick = { vm.restart() },
+                    modifier = Modifier.size(48.dp),
+                ) {
+                    Icon(Icons.Default.Replay, "Empezar de nuevo", modifier = Modifier.size(30.dp))
+                }
                 FilledIconButton(
                     onClick = { vm.togglePlay() },
                     modifier = Modifier.size(72.dp),

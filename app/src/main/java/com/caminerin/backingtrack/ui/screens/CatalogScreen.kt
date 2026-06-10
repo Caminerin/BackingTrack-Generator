@@ -1,5 +1,6 @@
 package com.caminerin.backingtrack.ui.screens
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -19,7 +20,11 @@ import androidx.compose.material.icons.filled.ExpandMore
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.FavoriteBorder
 import androidx.compose.material.icons.filled.Lock
+import androidx.compose.material.icons.filled.LockOpen
+import androidx.compose.material.icons.filled.PlayArrow
+import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.filled.Star
+import androidx.compose.material.icons.filled.Stop
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.AssistChip
 import androidx.compose.material3.Card
@@ -29,6 +34,7 @@ import androidx.compose.material3.FilterChip
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -49,6 +55,8 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.caminerin.backingtrack.model.FAVORITES_ID
+import com.caminerin.backingtrack.model.FREE_ID
+import com.caminerin.backingtrack.model.Quality
 import com.caminerin.backingtrack.model.Style
 import com.caminerin.backingtrack.model.Track
 import com.caminerin.backingtrack.ui.MainViewModel
@@ -86,9 +94,12 @@ private val SUBSTYLE_ORDER = listOf("Mayor", "Menor")
 fun CatalogScreen(vm: MainViewModel, nav: NavController) {
     val favorites by vm.favorites.collectAsState()
     val premium by vm.premium.collectAsState()
+    val quality by vm.quality.collectAsState()
+    val previewId by vm.previewId.collectAsState()
 
     val expanded = remember { mutableStateMapOf<String, Boolean>() }
     var lockedDialog by remember { mutableStateOf<Track?>(null) }
+    var showQuality by remember { mutableStateOf(false) }
 
     val selStyles = remember { mutableStateListOf<String>() }
     val selSub = remember { mutableStateListOf<String>() }
@@ -121,7 +132,12 @@ fun CatalogScreen(vm: MainViewModel, nav: NavController) {
         if (!anyFilter) {
             buildList {
                 if (favTracks.isNotEmpty()) add(Style(FAVORITES_ID, "Favoritos", favTracks))
-                addAll(vm.styles)
+                val freeTracks = vm.styles.flatMap { it.tracks }.filter { it.free }
+                if (freeTracks.isNotEmpty()) add(Style(FREE_ID, "Gratis", freeTracks))
+                vm.styles.forEach { s ->
+                    val paid = s.tracks.filter { !it.free }
+                    if (paid.isNotEmpty()) add(s.copy(tracks = paid))
+                }
             }
         } else {
             vm.styles.mapNotNull { s ->
@@ -132,7 +148,7 @@ fun CatalogScreen(vm: MainViewModel, nav: NavController) {
                         (selBpm.isEmpty() || selBpm.contains(bucketOf(t.bpm).label)) &&
                         (selSig.isEmpty() || selSig.contains(t.timeSignature)) &&
                         (selFeel.isEmpty() || selFeel.contains(t.feel))
-                }
+                }.sortedWith(compareByDescending<Track> { it.free })
                 if (matched.isEmpty()) null else s.copy(tracks = matched)
             }
         }
@@ -145,6 +161,11 @@ fun CatalogScreen(vm: MainViewModel, nav: NavController) {
                     containerColor = MaterialTheme.colorScheme.surface,
                     titleContentColor = MaterialTheme.colorScheme.primary,
                 ),
+                actions = {
+                    IconButton(onClick = { showQuality = true }) {
+                        Icon(Icons.Filled.Settings, contentDescription = "Calidad de descarga")
+                    }
+                },
             )
         }
     ) { pad ->
@@ -179,7 +200,8 @@ fun CatalogScreen(vm: MainViewModel, nav: NavController) {
                     }
                 }
                 sections.forEach { style ->
-                    val isOpen = expanded[style.id] ?: (anyFilter || style.id == FAVORITES_ID)
+                    val isOpen = expanded[style.id]
+                        ?: (anyFilter || style.id == FAVORITES_ID || style.id == FREE_ID)
                     item(key = "h_${style.id}") {
                         StyleHeader(style, isOpen) { expanded[style.id] = !isOpen }
                     }
@@ -190,6 +212,7 @@ fun CatalogScreen(vm: MainViewModel, nav: NavController) {
                                 track = track,
                                 favorite = favorites.contains(track.id),
                                 locked = locked,
+                                premium = premium,
                                 onFavorite = { vm.toggleFavorite(track) },
                                 onClick = {
                                     if (locked) {
@@ -208,28 +231,79 @@ fun CatalogScreen(vm: MainViewModel, nav: NavController) {
     }
 
     lockedDialog?.let { track ->
+        val isPreviewing = previewId == track.id
         AlertDialog(
-            onDismissRequest = { lockedDialog = null },
+            onDismissRequest = { vm.stopPreview(); lockedDialog = null },
             title = { Text("Pista de pago") },
             text = {
-                Text(
-                    "\"${track.title}\" pertenece a un paquete de pago del estilo " +
-                        "${track.styleName}. Cómpralo para desbloquear todas sus pistas " +
-                        "y las funciones de Tono y BPM."
-                )
+                Column {
+                    Text(
+                        "\"${track.title}\" es una pista de pago (${track.styleName}). " +
+                            "Escucha la preview de 15 s o desbloquéala (demo) para tocar " +
+                            "la pista completa con todos los instrumentos."
+                    )
+                    Spacer(Modifier.size(12.dp))
+                    TextButton(onClick = {
+                        if (isPreviewing) vm.stopPreview() else vm.playPreview(track)
+                    }) {
+                        Icon(
+                            if (isPreviewing) Icons.Filled.Stop else Icons.Filled.PlayArrow,
+                            contentDescription = null,
+                        )
+                        Spacer(Modifier.size(6.dp))
+                        Text(if (isPreviewing) "Detener preview" else "Escuchar preview (15 s)")
+                    }
+                }
             },
             confirmButton = {
                 TextButton(onClick = {
+                    vm.stopPreview()
                     vm.unlockPremiumDemo()
                     lockedDialog = null
                 }) { Text("Desbloquear (demo)") }
             },
             dismissButton = {
-                TextButton(onClick = { lockedDialog = null }) { Text("Cerrar") }
+                TextButton(onClick = { vm.stopPreview(); lockedDialog = null }) { Text("Cerrar") }
+            },
+        )
+    }
+
+    if (showQuality) {
+        AlertDialog(
+            onDismissRequest = { showQuality = false },
+            title = { Text("Calidad de descarga") },
+            text = {
+                Column {
+                    Text(
+                        "Calidad del audio que se descarga al reproducir. Solo afecta a " +
+                            "las pistas nuevas; las ya descargadas no cambian.",
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    )
+                    Spacer(Modifier.size(8.dp))
+                    Quality.entries.forEach { q ->
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically,
+                            modifier = Modifier.fillMaxWidth().clickable { vm.setQuality(q) },
+                        ) {
+                            RadioButton(selected = quality == q, onClick = { vm.setQuality(q) })
+                            Spacer(Modifier.size(4.dp))
+                            Text(QUALITY_DESC[q.id] ?: q.label)
+                        }
+                    }
+                }
+            },
+            confirmButton = {
+                TextButton(onClick = { showQuality = false }) { Text("Listo") }
             },
         )
     }
 }
+
+private val QUALITY_DESC = mapOf(
+    "low" to "Datos bajos — por defecto, menor consumo (Opus 40/64k)",
+    "std" to "Estándar (Opus 56/96k)",
+    "high" to "Alta — máxima calidad (Opus 80/128k)",
+)
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -328,6 +402,10 @@ private fun StyleHeader(style: Style, open: Boolean, onToggle: () -> Unit) {
             Icon(Icons.Default.Star, null, tint = MaterialTheme.colorScheme.primary)
             Spacer(Modifier.size(8.dp))
         }
+        if (style.id == FREE_ID) {
+            Icon(Icons.Default.LockOpen, null, tint = FreeGreen)
+            Spacer(Modifier.size(8.dp))
+        }
         Text(
             style.name,
             style = MaterialTheme.typography.titleMedium,
@@ -349,14 +427,19 @@ private fun TrackRow(
     track: Track,
     favorite: Boolean,
     locked: Boolean,
+    premium: Boolean,
     onFavorite: () -> Unit,
     onClick: () -> Unit,
 ) {
+    val container = when {
+        track.free -> FreeGreen.copy(alpha = 0.12f)
+        else -> MaterialTheme.colorScheme.surfaceVariant
+    }
     Card(
         modifier = Modifier.fillMaxWidth().padding(horizontal = 12.dp, vertical = 4.dp)
             .clickable { onClick() },
         shape = RoundedCornerShape(10.dp),
-        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant),
+        colors = CardDefaults.cardColors(containerColor = container),
     ) {
         Row(
             Modifier.fillMaxWidth().padding(horizontal = 14.dp, vertical = 12.dp),
@@ -375,8 +458,13 @@ private fun TrackRow(
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
             }
-            if (locked) {
-                Icon(Icons.Default.Lock, "De pago", tint = MaterialTheme.colorScheme.onSurfaceVariant)
+            when {
+                track.free -> Badge("GRATIS", FreeGreen)
+                locked -> Icon(
+                    Icons.Default.Lock, "De pago",
+                    tint = MaterialTheme.colorScheme.primary,
+                )
+                else -> Badge("Comprada", MaterialTheme.colorScheme.primary)
             }
             IconButton(onClick = onFavorite) {
                 Icon(
@@ -387,4 +475,19 @@ private fun TrackRow(
             }
         }
     }
+}
+
+private val FreeGreen = Color(0xFF2E7D32)
+
+@Composable
+private fun Badge(text: String, color: Color) {
+    Text(
+        text,
+        color = Color.White,
+        style = MaterialTheme.typography.labelSmall,
+        fontWeight = FontWeight.Bold,
+        modifier = Modifier
+            .background(color, RoundedCornerShape(6.dp))
+            .padding(horizontal = 8.dp, vertical = 3.dp),
+    )
 }

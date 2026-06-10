@@ -8,11 +8,27 @@ enum class Subdivision(val label: String, val symbol: String, val perBeat: Int) 
     SIXTEENTH("Semicorcheas", "♬", 4),
 }
 
-/** One instrument track inside a backing (e.g. "Batería" -> drums.mp3). */
+/**
+ * One instrument track inside a backing (e.g. "Batería").
+ * [asset] is the base asset name without quality/extension
+ * (e.g. "blues_a_60_even.drums"); the concrete file downloaded is
+ * "<asset>.<quality>.ogg" (see [Quality]).
+ */
 data class Stem(
     val instrument: String,
-    val audio: String,
+    val asset: String,
 )
+
+/** Download quality tier the user can pick (Opus bitrate). */
+enum class Quality(val id: String, val label: String) {
+    LOW("low", "Datos bajos"),
+    STD("std", "Estándar"),
+    HIGH("high", "Alta");
+
+    companion object {
+        fun fromId(id: String?): Quality = entries.firstOrNull { it.id == id } ?: STD
+    }
+}
 
 /** A chord placed at a given quarter-note beat (0-based) from the song start. */
 data class ChordEvent(
@@ -34,6 +50,8 @@ data class Track(
     val stems: List<Stem>,
     val chords: List<ChordEvent>,
     val free: Boolean,
+    /** Base asset name of the 15 s preview clip ("<id>.preview"); may be empty. */
+    val preview: String = "",
 )
 
 data class Style(
@@ -43,3 +61,4 @@ data class Style(
 )
 
 const val FAVORITES_ID = "favorites"
+const val FREE_ID = "free"

@@ -28,7 +28,11 @@ object CatalogRepository {
                 if (stemsJson != null) {
                     for (i in 0 until stemsJson.length()) {
                         val sj = stemsJson.getJSONObject(i)
-                        stems.add(Stem(sj.getString("instrument"), sj.getString("audio")))
+                        // New catalog uses "name" (base asset); fall back to the
+                        // legacy "audio" field for older catalogs.
+                        val asset = if (sj.has("name")) sj.getString("name")
+                            else sj.getString("audio")
+                        stems.add(Stem(sj.getString("instrument"), asset))
                     }
                 } else {
                     // Backwards-compatible single mixed file.
@@ -57,6 +61,7 @@ object CatalogRepository {
                         stems = stems,
                         chords = chords,
                         free = to.optBoolean("free", t < 2),
+                        preview = to.optString("preview", ""),
                     )
                 )
             }
